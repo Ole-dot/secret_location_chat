@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "949583340805",
+    "project_id": "me-c-69d57",
+    "storage_bucket": "me-c-69d57.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949583340805:android:de7cf713cac623dbeec36c",
+        "android_client_info": {
+          "package_name": "com.example.secret_location_chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ2UhB3F7pW2aevfhNHE2leohQksRUCjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949583340805:android:2317af65b83cfbd7eec36c",
+        "android_client_info": {
+          "package_name": "com.taya.slc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ2UhB3F7pW2aevfhNHE2leohQksRUCjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,63 @@
+name: secret_location_chat
+description: "Secret Location Chat — геозависимый анонимный мессенджер"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.2.3
+
+  # State management (из kiru + firebase_test)
+  flutter_bloc: ^9.1.1
+
+  # Navigation (из kiru + firebase_test)
+  go_router: ^17.1.0
+
+  # Map (из kumbel_map_sample)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # Firebase (из firebase_test)
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  flutter_secure_storage: ^9.2.2
+
+  # Animations (из flutter_animations)
+  flutter_animate: ^4.5.0
+
+  # Geolocation
+  geolocator: ^13.0.2
+  permission_handler: ^11.3.1
+  flutter_map_cache: ^2.1.0
+  path_provider: ^2.1.5
+  http_cache_hive_store: ^5.1.0
+  in_app_purchase: ^3.2.3
+  uuid: ^4.5.3
+  translator: ^1.0.4+1
+  video_player: ^2.10.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/user/
+    - assets/videos/
+    - assets/images/gifts/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#0A0A0A"   # чёрный фон
+  adaptive_icon_foreground: "assets/images/app_icon_fg.png"

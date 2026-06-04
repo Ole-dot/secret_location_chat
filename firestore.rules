@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function stonesFieldsChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny([
+          'stonesBalance',
+          'stonesLifetimeEarned',
+          'stonesLifetimeSpent',
+          'stonesVersion',
+          'stonesUpdatedAt'
+        ]);
+    }
+
+    function validStonesUpdate() {
+      let versionBefore = resource.data.get('stonesVersion', 0);
+      let versionAfter = request.resource.data.stonesVersion;
+      let balanceBefore = resource.data.get('stonesBalance', 0);
+      let balanceAfter = request.resource.data.stonesBalance;
+      return versionAfter == versionBefore + 1
+        && balanceAfter >= 0
+        && balanceAfter >= balanceBefore
+        && request.resource.data.stonesLifetimeEarned
+          >= resource.data.get('stonesLifetimeEarned', 0)
+        && request.resource.data.stonesLifetimeSpent
+          >= resource.data.get('stonesLifetimeSpent', 0);
+    }
+
+    match /users/{uid} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == uid;
+      allow update: if isSignedIn()
+        && request.auth.uid == uid
+        && (!stonesFieldsChanged() || validStonesUpdate());
+      allow delete: if false;
+
+      match /received_gifts/{giftEventId} {
+        allow read: if isSignedIn() && request.auth.uid == uid;
+        allow create: if isSignedIn()
+          && request.resource.data.giftEventId == giftEventId
+          && request.resource.data.senderUserId == request.auth.uid;
+        allow update, delete: if false;
+      }
+
+      match /sent_gifts/{giftEventId} {
+        allow read: if isSignedIn() && request.auth.uid == uid;
+        allow create: if isSignedIn()
+          && request.auth.uid == uid
+          && request.resource.data.giftEventId == giftEventId;
+        allow update, delete: if false;
+      }
+    }
+
+    match /geo_messages/{msgId} {
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.latitude is number
+        && request.resource.data.longitude is number;
+
+      allow update: if isSignedIn()
+        && (resource.data.authorUid == request.auth.uid
+            || (request.resource.data.diff(resource.data).affectedKeys()
+                  .hasOnly(['replyCount'])));
+
+      allow delete: if isSignedIn()
+        && resource.data.authorUid == request.auth.uid;
+
+      match /replies/{replyId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn()
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 300;
+        allow delete: if isSignedIn()
+          && resource.data.authorUid == request.auth.uid;
+      }
+    }
+
+    match /messages/{messageId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500;
+      allow update, delete: if false;
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.transactionId == transactionId
+        && request.resource.data.status == 'completed'
+        && request.resource.data.amount is int
+        && request.resource.data.balanceAfter
+          == request.resource.data.balanceBefore + request.resource.data.amount;
+      allow update, delete: if false;
+    }
+
+    match /gift_catalog/{giftId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /gift_events/{giftEventId} {
+      allow read: if isSignedIn()
+        && (resource.data.senderUserId == request.auth.uid
+            || resource.data.recipientUserId == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.senderUserId == request.auth.uid
+        && request.resource.data.giftEventId == giftEventId;
+      allow update, delete: if false;
+    }
+  }
+}
