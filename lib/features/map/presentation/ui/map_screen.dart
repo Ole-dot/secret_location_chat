@@ -34,7 +34,7 @@ class _TileConfig {
 
 const _tileConfigs = {
   MapStyle.dark: _TileConfig(
-    'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+    'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
     'Тёмная',
     '◼',
   ),
@@ -44,7 +44,7 @@ const _tileConfigs = {
     '⬡',
   ),
   MapStyle.minimal: _TileConfig(
-    'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+    'https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
     'Минимал',
     '◻',
   ),
@@ -233,7 +233,8 @@ class _MapBodyState extends State<_MapBody> {
                       urlTemplate: tile.url,
                       userAgentPackageName: 'com.slc.app',
                       maxZoom: 19,
-                      fallbackUrl: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+                      retinaMode: RetinaMode.isHighDensity(context),
+                      fallbackUrl: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
                       tileProvider: MapTileCache.store != null
                           ? CachedTileProvider(
                               store: MapTileCache.store!,
