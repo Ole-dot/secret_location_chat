@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
+
+enum _RegionId { north, baseCamp, southValley, polygonA7 }
+
+String _regionName(AppLocalizations l10n, _RegionId id) {
+  switch (id) {
+    case _RegionId.north:
+      return l10n.offlineRegionNorth;
+    case _RegionId.baseCamp:
+      return l10n.offlineRegionBaseCamp;
+    case _RegionId.southValley:
+      return l10n.offlineRegionSouthValley;
+    case _RegionId.polygonA7:
+      return l10n.offlineRegionPolygonA7;
+  }
+}
 
 class OfflineMapsScreen extends StatefulWidget {
   const OfflineMapsScreen({super.key});
@@ -11,21 +27,22 @@ class OfflineMapsScreen extends StatefulWidget {
 
 class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
   final _regions = [
-    _OfflineRegion('СЕВЕРНЫЙ УЧАСТОК', '12.4 МБ', false),
-    _OfflineRegion('БАЗОВЫЙ ЛАГЕРЬ', '8.1 МБ', true),
-    _OfflineRegion('ЮЖНАЯ ДОЛИНА', '15.7 МБ', false),
-    _OfflineRegion('ПОЛИГОН А-7', '22.0 МБ', false),
+    _OfflineRegion(_RegionId.north, '12.4', false),
+    _OfflineRegion(_RegionId.baseCamp, '8.1', true),
+    _OfflineRegion(_RegionId.southValley, '15.7', false),
+    _OfflineRegion(_RegionId.polygonA7, '22.0', false),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0A),
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
-        title: const Text(
-          'ОФФЛАЙН КАРТЫ',
-          style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
+        title: Text(
+          l10n.offlineMapsTitle,
+          style: const TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
@@ -44,9 +61,9 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                 borderRadius: BorderRadius.circular(8),
                 color: AppColors.neonRed.withValues(alpha: 0.06),
               ),
-              child: const Text(
-                'СКАЧАЙТЕ УЧАСТКИ КАРТЫ ЗАРАНЕЕ — В ПОЛЕ БЕЗ СВЯЗИ ТАЙЛЫ БУДУТ БРАТЬСЯ ИЗ КЭША.',
-                style: TextStyle(
+              child: Text(
+                l10n.offlineMapsHint,
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 11,
                   letterSpacing: 1,
@@ -59,13 +76,14 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
               region: r,
               onToggle: () {
                 setState(() => r.downloaded = !r.downloaded);
+                final name = _regionName(l10n, r.id);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     backgroundColor: AppColors.surfaceCard,
                     content: Text(
                       r.downloaded
-                          ? '${r.name} — В КЭШЕ'
-                          : '${r.name} — УДАЛЕНО',
+                          ? l10n.offlineRegionCached(name)
+                          : l10n.offlineRegionDeleted(name),
                       style: const TextStyle(color: AppColors.textPrimary),
                     ),
                   ),
@@ -73,9 +91,9 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
               },
             )),
             const SizedBox(height: 16),
-            const Text(
-              '// СКОРО: ВЫБОР ПРЯМОУГОЛЬНИКА НА КАРТЕ //',
-              style: TextStyle(color: AppColors.textDisabled, fontSize: 10, letterSpacing: 1),
+            Text(
+              l10n.offlineMapsSoon,
+              style: const TextStyle(color: AppColors.textDisabled, fontSize: 10, letterSpacing: 1),
             ),
           ],
         ),
@@ -85,11 +103,11 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
 }
 
 class _OfflineRegion {
-  final String name;
+  final _RegionId id;
   final String size;
   bool downloaded;
 
-  _OfflineRegion(this.name, this.size, this.downloaded);
+  _OfflineRegion(this.id, this.size, this.downloaded);
 }
 
 class _RegionTile extends StatelessWidget {
@@ -100,6 +118,7 @@ class _RegionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -115,7 +134,7 @@ class _RegionTile extends StatelessWidget {
           color: AppColors.neonRed,
         ),
         title: Text(
-          region.name,
+          _regionName(l10n, region.id),
           style: const TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
@@ -124,13 +143,13 @@ class _RegionTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          region.size,
+          '${region.size} ${l10n.unitMb}',
           style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
         ),
         trailing: TextButton(
           onPressed: onToggle,
           child: Text(
-            region.downloaded ? 'УДАЛИТЬ' : 'СКАЧАТЬ',
+            region.downloaded ? l10n.commonDelete : l10n.commonDownload,
             style: const TextStyle(
               color: AppColors.neonRed,
               fontSize: 10,

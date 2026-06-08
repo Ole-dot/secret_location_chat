@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/data/chat/global_chat_repository.dart';
 import 'package:secret_location_chat/data/models/chat_message_model.dart';
 import 'package:secret_location_chat/features/chat/global_chat_launch_args.dart';
 import 'package:secret_location_chat/features/chat/presentation/bloc/global_chat_bloc.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class GlobalChatScreen extends StatefulWidget {
   final GlobalChatLaunchArgs args;
@@ -40,6 +42,7 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocProvider(
       create: (_) => GlobalChatBloc(
         repo: GlobalChatRepository(),
@@ -61,7 +64,7 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
-              title: const Text('ОБЩИЙ ЧАТ'),
+              title: Text(l10n.chatTitle),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new, size: 18),
                 onPressed: () => context.pop(),
@@ -83,9 +86,9 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'ВЫ НАПЕЧАТАЛИ',
-                          style: TextStyle(
+                        Text(
+                          l10n.chatYouTyped,
+                          style: const TextStyle(
                             color: AppColors.neonRed,
                             fontSize: 10,
                             letterSpacing: 2,
@@ -128,7 +131,7 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      ready!.error!,
+                      l10nByKey(l10n, ready!.error!),
                       style: const TextStyle(color: AppColors.neonRed, fontSize: 12),
                     ),
                   ),
@@ -234,6 +237,7 @@ class _InputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -243,9 +247,9 @@ class _InputBar extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
-                  hintText: 'Сообщение в общий чат...',
-                  hintStyle: TextStyle(color: AppColors.textDisabled),
+                decoration: InputDecoration(
+                  hintText: l10n.chatInputHint,
+                  hintStyle: const TextStyle(color: AppColors.textDisabled),
                 ),
                 onSubmitted: (_) => onSend(),
               ),

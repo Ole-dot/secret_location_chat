@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/translation/translation_service.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class CyberDecryptionText extends StatefulWidget {
   final String text;
@@ -88,6 +89,7 @@ class _CyberDecryptionTextState extends State<CyberDecryptionText>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final baseStyle = widget.style ??
         const TextStyle(
           color: AppColors.textPrimary,
@@ -102,7 +104,7 @@ class _CyberDecryptionTextState extends State<CyberDecryptionText>
         builder: (context, _) {
           final opacity = 0.45 + _pulseController.value * 0.55;
           return Text(
-            '[ РАСШИФРОВКА ПЕРЕДАЧИ... ]',
+            l10n.decryptionInProgress,
             style: baseStyle.copyWith(
               color: AppColors.neonRed.withValues(alpha: opacity),
               letterSpacing: 1.2,

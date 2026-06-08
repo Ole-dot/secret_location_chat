@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class CyberVolumeControl extends StatefulWidget {
   final double initialVolume;
@@ -83,6 +84,7 @@ class _CyberVolumeControlState extends State<CyberVolumeControl>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -93,9 +95,9 @@ class _CyberVolumeControlState extends State<CyberVolumeControl>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'ГРОМКОСТЬ УВЕДОМЛЕНИЙ',
-            style: TextStyle(
+          Text(
+            l10n.volumeLabel,
+            style: const TextStyle(
               color: AppColors.textSecondary,
               fontFamily: 'monospace',
               fontSize: 10,

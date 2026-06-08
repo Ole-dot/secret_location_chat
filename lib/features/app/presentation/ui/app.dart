@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/localization/language_cubit.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 import 'package:secret_location_chat/core/router/router.dart';
 import 'package:secret_location_chat/core/theme/app_theme.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
@@ -112,16 +112,8 @@ class _SlcAppState extends State<SlcApp> {
                   darkTheme: AppTheme.dark,
                   themeMode: themeMode,
                   locale: Locale(languageState.languageCode),
-                  localizationsDelegates: const [
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  supportedLocales: const [
-                    Locale('ru'),
-                    Locale('en'),
-                    Locale('kk'),
-                  ],
+                  localizationsDelegates: AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
                   routerConfig: _router,
                 );
               },

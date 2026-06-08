@@ -38,7 +38,7 @@ class PasswordResetBloc extends Bloc<PasswordResetEvent, PasswordResetState> {
   ) async {
     final email = event.email.trim();
     if (email.isEmpty) {
-      emit(PasswordResetErrorState('ВВЕДИТЕ EMAIL'));
+      emit(PasswordResetErrorState('errorEnterEmail'));
       return;
     }
 

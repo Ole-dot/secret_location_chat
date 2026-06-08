@@ -139,7 +139,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Future<void> _onSend(MapSendMessageEvent e, Emitter<MapState> emit) async {
     final pos = state.userPosition;
-    if (pos == null) { emit(state.copyWith(error: 'Геолокация недоступна')); return; }
+    if (pos == null) { emit(state.copyWith(error: 'errorGeoUnavailable')); return; }
     try {
       await _msgRepo.sendMessage(
         authorUid: _uid,

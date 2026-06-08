@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/auth/firebase_auth_language.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
 import 'package:secret_location_chat/features/auth/presentation/bloc/password_reset_bloc.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({super.key});
@@ -41,11 +43,11 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         listener: (context, state) {
           if (state is PasswordResetSuccessState) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 backgroundColor: AppColors.surfaceCard,
                 content: Text(
-                  'Ссылка для сброса пароля отправлена на email',
-                  style: TextStyle(color: AppColors.textPrimary),
+                  AppLocalizations.of(context).resetLinkSent,
+                  style: const TextStyle(color: AppColors.textPrimary),
                 ),
               ),
             );
@@ -54,7 +56,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               SnackBar(
                 backgroundColor: AppColors.neonRedDark,
                 content: Text(
-                  state.message,
+                  l10nByKey(AppLocalizations.of(context), state.message),
                   style: const TextStyle(color: AppColors.white),
                 ),
               ),
@@ -62,6 +64,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
           }
         },
         builder: (context, state) {
+          final l10n = AppLocalizations.of(context);
           return Scaffold(
             backgroundColor: AppColors.background,
             body: SafeArea(
@@ -71,9 +74,9 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 48),
-                    const Text(
-                      'СБРОС',
-                      style: TextStyle(
+                    Text(
+                      l10n.resetTitle,
+                      style: const TextStyle(
                         color: AppColors.neonRed,
                         fontSize: 36,
                         fontWeight: FontWeight.w900,
@@ -81,9 +84,9 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      '// ВОССТАНОВЛЕНИЕ ДОСТУПА //',
-                      style: TextStyle(
+                    Text(
+                      l10n.resetSubtitle,
+                      style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 11,
                         letterSpacing: 2,
@@ -103,7 +106,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const _SlcLabel('ЯЗЫК ПИСЬМА'),
+                    _SlcLabel(l10n.resetEmailLanguage),
                     const SizedBox(height: 8),
                     _LanguageSelector(
                       value: _firebaseLanguageCode,
@@ -112,7 +115,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     ),
                     const SizedBox(height: 32),
                     SlcButton(
-                      text: 'Отправить ссылку',
+                      text: l10n.resetSendLink,
                       isLoading: state is PasswordResetLoadingState,
                       onTap: () {
                         context.read<PasswordResetBloc>().add(
@@ -127,9 +130,9 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     Center(
                       child: GestureDetector(
                         onTap: () => context.go('/auth'),
-                        child: const Text(
-                          '← Назад ко входу',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.commonBackToLogin,
+                          style: const TextStyle(
                             color: AppColors.textDisabled,
                             fontSize: 12,
                           ),
@@ -158,11 +161,12 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final deviceLang =
         PlatformDispatcher.instance.locale.languageCode.toLowerCase();
     final deviceHint = deviceLang == 'kk' || deviceLang == 'kz'
-        ? ' (язык устройства: ҚАЗ)'
-        : ' (язык устройства: РУС)';
+        ? l10n.resetDeviceLangKaz
+        : l10n.resetDeviceLangRus;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,13 +174,13 @@ class _LanguageSelector extends StatelessWidget {
         Row(
           children: [
             _LangChip(
-              label: 'РУС',
+              label: l10n.resetLangRus,
               selected: value == firebaseAuthLanguageRu,
               onTap: () => onChanged(firebaseAuthLanguageRu),
             ),
             const SizedBox(width: 12),
             _LangChip(
-              label: 'ҚАЗ',
+              label: l10n.resetLangKaz,
               selected: value == firebaseAuthLanguageKk,
               onTap: () => onChanged(firebaseAuthLanguageKk),
             ),

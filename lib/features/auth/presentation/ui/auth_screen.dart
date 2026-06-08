@@ -5,6 +5,8 @@ import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/app_auth_bloc.dart';
 import 'package:secret_location_chat/features/auth/presentation/bloc/auth_form_bloc.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 /// Экран входа — тёмные силуэты, красные акценты
 class AuthScreen extends StatefulWidget {
@@ -34,6 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocProvider<AuthFormBloc>(
       create: (_) => AuthFormBloc(),
       child: BlocListener<AppAuthBloc, AppAuthState>(
@@ -45,7 +48,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SnackBar(
                 backgroundColor: AppColors.neonRedDark,
                 content: Text(
-                  state.message,
+                  l10nByKey(l10n, state.message),
                   style: const TextStyle(color: AppColors.white),
                 ),
               ),
@@ -63,8 +66,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   const SizedBox(height: 48),
 
                   // Заголовок
-                  const Text(
-                    'ВХОД',
+                  Text(
+                    l10n.authTitle,
                     style: TextStyle(
                       color: AppColors.neonRed,
                       fontSize: 36,
@@ -73,8 +76,8 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    '// ИДЕНТИФИКАЦИЯ //',
+                  Text(
+                    l10n.authSubtitle,
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 11,
@@ -116,7 +119,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             Padding(
                               padding: const EdgeInsets.only(top: 4),
                               child: Text(
-                                formState.emailError!,
+                                l10nByKey(l10n, formState.emailError!),
                                 style: const TextStyle(
                                   color: AppColors.neonRed,
                                   fontSize: 11,
@@ -136,7 +139,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _SlcLabel('ПАРОЛЬ'),
+                          _SlcLabel(l10n.fieldPassword),
                           const SizedBox(height: 6),
                           TextField(
                             controller: _passwordController,
@@ -158,7 +161,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             Padding(
                               padding: const EdgeInsets.only(top: 4),
                               child: Text(
-                                formState.passwordError!,
+                                l10nByKey(l10n, formState.passwordError!),
                                 style: const TextStyle(
                                   color: AppColors.neonRed,
                                   fontSize: 11,
@@ -176,7 +179,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   BlocBuilder<AppAuthBloc, AppAuthState>(
                     builder: (context, state) {
                       return SlcButton(
-                        text: 'Вход',
+                        text: l10n.authLoginButton,
                         isLoading: state is AppAuthLoadingState,
                         onTap: () {
                           context.read<AppAuthBloc>().add(
@@ -195,8 +198,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   Center(
                     child: GestureDetector(
                       onTap: () => context.go('/reset-password'),
-                      child: const Text(
-                        'Забыл пароль? → СБРОС',
+                      child: Text(
+                        l10n.authForgotPassword,
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
@@ -212,8 +215,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   Center(
                     child: GestureDetector(
                       onTap: () => context.go('/register'),
-                      child: const Text(
-                        'Зарегался? → РЕГАЙСЯ',
+                      child: Text(
+                        l10n.authToRegister,
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
@@ -227,8 +230,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   Center(
                     child: GestureDetector(
                       onTap: () => context.go('/splash'),
-                      child: const Text(
-                        '← Назад',
+                      child: Text(
+                        l10n.commonBack,
                         style: TextStyle(
                           color: AppColors.textDisabled,
                           fontSize: 12,

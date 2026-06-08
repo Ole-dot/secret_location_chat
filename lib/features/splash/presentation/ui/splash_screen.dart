@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/app_auth_bloc.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 /// Стартовый экран — заглушка с кнопками «Включить локацию» и «Играть»
 /// Стиль: маска + красная спираль на чёрном фоне (Cyberpunk / Y2K)
@@ -38,6 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocListener<AppAuthBloc, AppAuthState>(
       listener: (context, state) {
         if (state is AppAuthAuthenticatedState) {
@@ -87,9 +89,9 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
 
                   const SizedBox(height: 8),
-                  const Text(
-                    '// АНОНИМНЫЙ ГЕО-МЕССЕНДЖЕР //',
-                    style: TextStyle(
+                  Text(
+                    l10n.splashSubtitle,
+                    style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 10,
                       letterSpacing: 2,
@@ -104,21 +106,21 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Column(
                       children: [
                         SlcButton(
-                          text: '⦿  Включить локацию',
+                          text: l10n.splashEnableLocation,
                           onTap: () => context.go('/map'),
                         ),
                         const SizedBox(height: 16),
                         SlcButton(
-                          text: 'Войти',
+                          text: l10n.splashLogin,
                           isOutlined: true,
                           onTap: () => context.go('/auth'),
                         ),
                         const SizedBox(height: 12),
                         GestureDetector(
                           onTap: () => context.go('/register'),
-                          child: const Text(
-                            'Нет аккаунта? Регайся →',
-                            style: TextStyle(
+                          child: Text(
+                            l10n.splashNoAccount,
+                            style: const TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 13,
                               letterSpacing: 1,

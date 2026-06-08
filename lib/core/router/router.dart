@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/data/gifts/gift_repository.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/app_auth_bloc.dart';
 import 'package:secret_location_chat/features/app/presentation/ui/video_splash_screen.dart';
 import 'package:secret_location_chat/features/auth/presentation/ui/auth_screen.dart';
@@ -53,8 +54,8 @@ GoRouter buildRouter(AppAuthBloc authBloc) => GoRouter(
       builder: (context, state) {
         final args = state.extra as GlobalChatLaunchArgs?;
         if (args == null) {
-          return const Scaffold(
-            body: Center(child: Text('Чат недоступен')),
+          return Scaffold(
+            body: Center(child: Text(AppLocalizations.of(context).authRequiredChat)),
           );
         }
         return GlobalChatScreen(args: args);
@@ -84,7 +85,7 @@ GoRouter buildRouter(AppAuthBloc authBloc) => GoRouter(
       builder: (context, state) {
         final authState = context.read<AppAuthBloc>().state;
         if (authState is! AppAuthAuthenticatedState) {
-          return const _AuthRequiredScreen(message: 'Войдите для покупки Stones');
+          return _AuthRequiredScreen(message: AppLocalizations.of(context).authRequiredStones);
         }
         return const StonesStoreScreen();
       },
@@ -94,7 +95,7 @@ GoRouter buildRouter(AppAuthBloc authBloc) => GoRouter(
       builder: (context, state) {
         final authState = context.read<AppAuthBloc>().state;
         if (authState is! AppAuthAuthenticatedState) {
-          return const _AuthRequiredScreen(message: 'Войдите для отправки подарков');
+          return _AuthRequiredScreen(message: AppLocalizations.of(context).authRequiredGifts);
         }
         final args = state.extra as GiftStoreLaunchArgs? ?? const GiftStoreLaunchArgs();
         return BlocProvider(
@@ -113,7 +114,7 @@ GoRouter buildRouter(AppAuthBloc authBloc) => GoRouter(
       builder: (context, state) {
         final authState = context.read<AppAuthBloc>().state;
         if (authState is! AppAuthAuthenticatedState) {
-          return const _AuthRequiredScreen(message: 'Войдите для TERMINAL HACK');
+          return _AuthRequiredScreen(message: AppLocalizations.of(context).authRequiredTerminalHack);
         }
         return const TetrisGameScreen();
       },

@@ -42,7 +42,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       if (user != null) {
         emit(RegisterSuccessState(user));
       } else {
-        emit(RegisterErrorState('Не удалось создать аккаунт'));
+        emit(RegisterErrorState('errorCreateAccountFailed'));
       }
     } catch (e) {
       emit(RegisterErrorState(mapFirebaseError(e)));

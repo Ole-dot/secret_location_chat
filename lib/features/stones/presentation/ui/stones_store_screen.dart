@@ -7,6 +7,8 @@ import 'package:secret_location_chat/core/widgets/cyberpunk_button.dart';
 import 'package:secret_location_chat/data/stones/stones_product_ids.dart';
 import 'package:secret_location_chat/features/stones/presentation/bloc/stones_cubit.dart';
 import 'package:secret_location_chat/features/stones/presentation/ui/stones_balance_chip.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class StonesStoreScreen extends StatefulWidget {
   const StonesStoreScreen({super.key});
@@ -24,6 +26,7 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -50,18 +53,18 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
                     children: [
                       Center(child: StonesBalanceChip(balance: state.balance)),
                       const SizedBox(height: 16),
-                      const Text(
-                        '// ВНУТРИИГРОВАЯ ВАЛЮТА //',
-                        style: TextStyle(
+                      Text(
+                        l10n.stonesSubtitle,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 10,
                           letterSpacing: 2,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Пополните баланс Stones для отправки подарков в чате.',
-                        style: TextStyle(
+                      Text(
+                        l10n.stonesDescription,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
                           height: 1.4,
@@ -74,7 +77,7 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      state.error!,
+                      l10nByKey(l10n, state.error!),
                       style: const TextStyle(
                         color: AppColors.neonRed,
                         fontSize: 11,
@@ -113,7 +116,7 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: CyberpunkButton(
-                      text: 'ОБНОВИТЬ МАГАЗИН',
+                      text: l10n.stonesRefreshStore,
                       isOutlined: true,
                       onPressed: () =>
                           context.read<StonesCubit>().loadStore(),

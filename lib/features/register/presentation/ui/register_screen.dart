@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
 import 'package:secret_location_chat/features/register/presentation/bloc/register_bloc.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -36,6 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocProvider(
       create: (_) => RegisterBloc(context.read<AuthRepository>()),
       child: BlocListener<RegisterBloc, RegisterState>(
@@ -46,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: AppColors.neonRedDark,
-                content: Text(state.message, style: const TextStyle(color: AppColors.white)),
+                content: Text(l10nByKey(l10n, state.message), style: const TextStyle(color: AppColors.white)),
               ),
             );
           }
@@ -60,9 +63,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 48),
-                  const Text(
-                    'РЕГАЙСЯ',
-                    style: TextStyle(
+                  Text(
+                    l10n.registerTitle,
+                    style: const TextStyle(
                       color: AppColors.neonRed,
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
@@ -70,28 +73,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    '// СОЗДАЙ ЛИЧНОСТЬ //',
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 11, letterSpacing: 2),
+                  Text(
+                    l10n.registerSubtitle,
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, letterSpacing: 2),
                   ),
                   const SizedBox(height: 48),
                   Container(height: 1, color: AppColors.neonRed),
                   const SizedBox(height: 32),
 
-                  _Label('НИК (необязательно)'),
+                  _Label(l10n.registerNickLabel),
                   const SizedBox(height: 6),
                   TextField(
                     controller: _usernameCtrl,
                     style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: const InputDecoration(
-                      hintText: 'пусто → Кислотный Енот',
-                      hintStyle: TextStyle(color: AppColors.textDisabled, fontSize: 12),
+                    decoration: InputDecoration(
+                      hintText: l10n.registerNickHint,
+                      hintStyle: const TextStyle(color: AppColors.textDisabled, fontSize: 12),
                     ),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
-                    '// иначе случайный кибер-ник при регистрации //',
-                    style: TextStyle(color: AppColors.textDisabled, fontSize: 10, letterSpacing: 1),
+                  Text(
+                    l10n.registerNickNote,
+                    style: const TextStyle(color: AppColors.textDisabled, fontSize: 10, letterSpacing: 1),
                   ),
                   const SizedBox(height: 20),
 
@@ -105,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  _Label('ПАРОЛЬ'),
+                  _Label(l10n.fieldPassword),
                   const SizedBox(height: 6),
                   TextField(
                     controller: _passwordCtrl,
@@ -117,7 +120,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   BlocBuilder<RegisterBloc, RegisterState>(
                     builder: (context, state) => SlcButton(
-                      text: 'Зарегался',
+                      text: l10n.registerButton,
                       isLoading: state is RegisterLoadingState,
                       onTap: () {
                         context.read<RegisterBloc>().add(
@@ -134,9 +137,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Center(
                     child: GestureDetector(
                       onTap: () => context.go('/reset-password'),
-                      child: const Text(
-                        'Забыл пароль? → СБРОС',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 12, letterSpacing: 1),
+                      child: Text(
+                        l10n.authForgotPassword,
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, letterSpacing: 1),
                       ),
                     ),
                   ),
@@ -144,9 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Center(
                     child: GestureDetector(
                       onTap: () => context.go('/auth'),
-                      child: const Text(
-                        'Уже есть аккаунт? → ВХОД',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 12, letterSpacing: 1),
+                      child: Text(
+                        l10n.registerHaveAccount,
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, letterSpacing: 1),
                       ),
                     ),
                   ),

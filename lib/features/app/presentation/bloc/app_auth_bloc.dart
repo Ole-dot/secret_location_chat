@@ -95,7 +95,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
       if (user != null) {
         emit(AppAuthAuthenticatedState(user));
       } else {
-        emit(AppAuthErrorState('НЕВЕРНЫЙ ПАРОЛЬ'));
+        emit(AppAuthErrorState('errorWrongPassword'));
       }
     } catch (e) {
       emit(AppAuthErrorState(mapFirebaseError(e)));

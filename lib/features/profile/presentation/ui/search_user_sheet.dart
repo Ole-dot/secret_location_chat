@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/auth/firebase_error_messages.dart';
 import 'package:secret_location_chat/core/constants/user_avatars.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/data/models/user_model.dart';
 import 'package:secret_location_chat/data/user/user_repository.dart';
 import 'package:secret_location_chat/features/gifts/gift_store_launch_args.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class SearchUserSheet extends StatefulWidget {
   final bool selectMode;
@@ -50,12 +52,13 @@ class _SearchUserSheetState extends State<SearchUserSheet> {
   }
 
   Future<void> _search() async {
+    final l10n = AppLocalizations.of(context);
     final email = _emailCtrl.text.trim();
     if (email.isEmpty) {
       setState(() {
         _foundUser = null;
         _notFound = false;
-        _errorMessage = 'ВВЕДИТЕ EMAIL';
+        _errorMessage = l10n.searchEnterEmail;
       });
       return;
     }
@@ -88,6 +91,7 @@ class _SearchUserSheetState extends State<SearchUserSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Padding(
@@ -123,9 +127,9 @@ class _SearchUserSheetState extends State<SearchUserSheet> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'НАЙТИ ПОЛЬЗОВАТЕЛЯ',
-                style: TextStyle(
+              Text(
+                l10n.searchTitle,
+                style: const TextStyle(
                   color: AppColors.neonRed,
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
@@ -133,9 +137,9 @@ class _SearchUserSheetState extends State<SearchUserSheet> {
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
-                '// ПОИСК ПО ТОЧНОМУ EMAIL //',
-                style: TextStyle(
+              Text(
+                l10n.searchSubtitle,
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 10,
                   letterSpacing: 2,
@@ -164,14 +168,14 @@ class _SearchUserSheetState extends State<SearchUserSheet> {
               ),
               const SizedBox(height: 20),
               SlcButton(
-                text: 'Искать',
+                text: l10n.searchButton,
                 isLoading: _isSearching,
                 onTap: _search,
               ),
               const SizedBox(height: 20),
               if (_errorMessage != null)
                 Text(
-                  _errorMessage!,
+                  l10nByKey(l10n, _errorMessage!),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: AppColors.neonRed,
@@ -180,10 +184,10 @@ class _SearchUserSheetState extends State<SearchUserSheet> {
                   ),
                 ),
               if (_notFound)
-                const Text(
-                  'ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН',
+                Text(
+                  l10n.searchNotFound,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
                     letterSpacing: 2,
@@ -225,6 +229,7 @@ class _UserResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -284,9 +289,9 @@ class _UserResultCard extends StatelessWidget {
                         ),
                         if (selectMode) ...[
                           const SizedBox(height: 6),
-                          const Text(
-                            'НАЖМИТЕ, ЧТОБЫ ВЫБРАТЬ',
-                            style: TextStyle(
+                          Text(
+                            l10n.searchTapToSelect,
+                            style: const TextStyle(
                               color: AppColors.neonRed,
                               fontSize: 9,
                               letterSpacing: 1.5,
@@ -304,7 +309,7 @@ class _UserResultCard extends StatelessWidget {
         if (onSendGift != null) ...[
           const SizedBox(height: 12),
           SlcButton(
-            text: 'ОТПРАВИТЬ ПОДАРОК',
+            text: l10n.searchSendGift,
             onTap: onSendGift,
           ),
         ],

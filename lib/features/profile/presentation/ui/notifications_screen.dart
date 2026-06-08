@@ -3,19 +3,21 @@ import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/features/profile/presentation/ui/widgets/cyber_radar_slider.dart';
 import 'package:secret_location_chat/features/profile/presentation/ui/widgets/cyber_volume_control.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        title: const Text(
-          'УВЕДОМЛЕНИЯ',
-          style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
+        title: Text(
+          l10n.notificationsTitle,
+          style: const TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),

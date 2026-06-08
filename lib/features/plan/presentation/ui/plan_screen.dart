@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/data/prefs/user_prefs_service.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/map_bloc.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 /// Показывается, если на /plan перешли без [MapBloc] в [GoRouterState.extra].
 class PlanScreenMissingBloc extends StatelessWidget {
@@ -11,24 +12,25 @@ class PlanScreenMissingBloc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('ТАРИФНЫЙ ПЛАН')),
+      appBar: AppBar(title: Text(l10n.planTitle)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Откройте тарифы с карты',
-                style: TextStyle(color: AppColors.textSecondary),
+              Text(
+                l10n.planMissingHint,
+                style: const TextStyle(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => context.go('/map'),
-                child: const Text('На карту', style: TextStyle(color: AppColors.neonRed)),
+                child: Text(l10n.planToMap, style: const TextStyle(color: AppColors.neonRed)),
               ),
             ],
           ),
@@ -44,11 +46,12 @@ class PlanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentPlan = context.select((MapBloc b) => b.state.plan);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('ТАРИФНЫЙ ПЛАН'),
+        title: Text(l10n.planTitle),
         leading: GestureDetector(
           onTap: () => context.pop(),
           child: const Icon(Icons.arrow_back_ios_new, color: AppColors.textSecondary, size: 18),
@@ -68,13 +71,13 @@ class PlanScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Row(
-                children: const [
-                  Icon(Icons.science_outlined, color: AppColors.neonRed, size: 16),
-                  SizedBox(width: 8),
+                children: [
+                  const Icon(Icons.science_outlined, color: AppColors.neonRed, size: 16),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Тестовый режим — смени план и сразу проверь все возможности',
-                      style: TextStyle(color: AppColors.neonRed, fontSize: 12, height: 1.4),
+                      l10n.planTestModeBanner,
+                      style: const TextStyle(color: AppColors.neonRed, fontSize: 12, height: 1.4),
                     ),
                   ),
                 ],
@@ -89,18 +92,18 @@ class PlanScreen extends StatelessWidget {
                     plan: UserPlan.free,
                     currentPlan: currentPlan,
                     price: '₸ 0',
-                    subtitle: 'Базовый',
+                    subtitle: l10n.planFreeSubtitle,
                     color: AppColors.textSecondary,
-                    features: const [
-                      _Feature('До 5 сообщений в день', true),
-                      _Feature('TTL максимум 1 час', true),
-                      _Feature('Стандартный ник на карте', true),
-                      _Feature('Анонимный режим', false),
-                      _Feature('TTL до 24 часов', false),
-                      _Feature('Аватарки и подарки', false),
-                      _Feature('Totem Compass', false),
-                      _Feature('Unity-игра', false),
-                      _Feature('Приватные зоны', false),
+                    features: [
+                      _Feature((l) => l.planFeatMsg5PerDay, true),
+                      _Feature((l) => l.planFeatTtl1h, true),
+                      _Feature((l) => l.planFeatStandardNick, true),
+                      _Feature((l) => l.planFeatAnonMode, false),
+                      _Feature((l) => l.planFeatTtl24h, false),
+                      _Feature((l) => l.planFeatAvatarsGifts, false),
+                      _Feature((l) => l.planFeatTotemCompass, false),
+                      _Feature((l) => l.planFeatUnityGame, false),
+                      _Feature((l) => l.planFeatPrivateZones, false),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -108,20 +111,20 @@ class PlanScreen extends StatelessWidget {
                   _PlanCard(
                     plan: UserPlan.premium,
                     currentPlan: currentPlan,
-                    price: '₸ 5 000 / мес',
-                    subtitle: 'Популярный',
+                    price: '₸ 5 000${l10n.perMonth}',
+                    subtitle: l10n.planPremiumSubtitle,
                     color: AppColors.neonRed,
                     isFeatured: true,
-                    features: const [
-                      _Feature('Сообщений без лимита', true),
-                      _Feature('TTL до 24 часов', true),
-                      _Feature('Анонимный режим (Shadow_XXXX)', true),
-                      _Feature('Кастомные аватарки', true),
-                      _Feature('Подарки другим юзерам', true),
-                      _Feature('Totem Compass', true),
-                      _Feature('Unity-игра', true),
-                      _Feature('Приватные зоны', false),
-                      _Feature('API-интеграции', false),
+                    features: [
+                      _Feature((l) => l.planFeatUnlimitedMsg, true),
+                      _Feature((l) => l.planFeatTtl24h, true),
+                      _Feature((l) => l.planFeatAnonShadow, true),
+                      _Feature((l) => l.planFeatCustomAvatars, true),
+                      _Feature((l) => l.planFeatGiftsToUsers, true),
+                      _Feature((l) => l.planFeatTotemCompass, true),
+                      _Feature((l) => l.planFeatUnityGame, true),
+                      _Feature((l) => l.planFeatPrivateZones, false),
+                      _Feature((l) => l.planFeatApiIntegrations, false),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -129,19 +132,19 @@ class PlanScreen extends StatelessWidget {
                   _PlanCard(
                     plan: UserPlan.enterprise,
                     currentPlan: currentPlan,
-                    price: '₸ 50 000+ / мес',
-                    subtitle: 'Для команд и бизнеса',
+                    price: '₸ 50 000+${l10n.perMonth}',
+                    subtitle: l10n.planEnterpriseSubtitle,
                     color: const Color(0xFF7F77DD),
-                    features: const [
-                      _Feature('Всё из Premium', true),
-                      _Feature('Приватные геозоны', true),
-                      _Feature('Командные чаты', true),
-                      _Feature('Аналитика активности', true),
-                      _Feature('API-интеграции', true),
-                      _Feature('White-label оформление', true),
-                      _Feature('Приоритетная поддержка', true),
-                      _Feature('E2E шифрование', true),
-                      _Feature('SLA гарантии', true),
+                    features: [
+                      _Feature((l) => l.planFeatAllPremium, true),
+                      _Feature((l) => l.planFeatPrivateGeozones, true),
+                      _Feature((l) => l.planFeatTeamChats, true),
+                      _Feature((l) => l.planFeatActivityAnalytics, true),
+                      _Feature((l) => l.planFeatApiIntegrations, true),
+                      _Feature((l) => l.planFeatWhiteLabel, true),
+                      _Feature((l) => l.planFeatPrioritySupport, true),
+                      _Feature((l) => l.planFeatE2eEncryption, true),
+                      _Feature((l) => l.planFeatSlaGuarantees, true),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -156,7 +159,7 @@ class PlanScreen extends StatelessWidget {
 }
 
 class _Feature {
-  final String text;
+  final String Function(AppLocalizations) text;
   final bool included;
   const _Feature(this.text, this.included);
 }
@@ -184,6 +187,7 @@ class _PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       decoration: BoxDecoration(
@@ -233,9 +237,9 @@ class _PlanCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(color: AppColors.neonRed.withValues(alpha: 0.4)),
                               ),
-                              child: const Text(
-                                'ХИТ',
-                                style: TextStyle(color: AppColors.neonRed, fontSize: 9, letterSpacing: 2, fontWeight: FontWeight.w700),
+                              child: Text(
+                                l10n.planBadgeHit,
+                                style: const TextStyle(color: AppColors.neonRed, fontSize: 9, letterSpacing: 2, fontWeight: FontWeight.w700),
                               ),
                             ),
                           ],
@@ -261,7 +265,7 @@ class _PlanCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(color: color.withValues(alpha: 0.4)),
                     ),
-                    child: Text('АКТИВЕН', style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2)),
+                    child: Text(l10n.planBadgeActive, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2)),
                   )
                 else
                   GestureDetector(
@@ -273,7 +277,7 @@ class _PlanCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: color.withValues(alpha: 0.5)),
                       ),
-                      child: Text('ВЫБРАТЬ', style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2)),
+                      child: Text(l10n.planSelect, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2)),
                     ),
                   ),
               ],
@@ -295,7 +299,7 @@ class _PlanCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      f.text,
+                      f.text(l10n),
                       style: TextStyle(
                         color: f.included ? AppColors.textPrimary : AppColors.textDisabled,
                         fontSize: 13,
@@ -322,7 +326,7 @@ class _PlanCard extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  'Активировать ${plan.label}',
+                  l10n.planActivate(plan.label),
                   style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 1),
                 ),
               ),
@@ -344,7 +348,7 @@ class _PlanCard extends StatelessWidget {
             Icon(Icons.check_circle, color: color, size: 18),
             const SizedBox(width: 10),
             Text(
-              'Тариф ${plan.label} активирован',
+              AppLocalizations.of(context).planActivatedSnack(plan.label),
               style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
             ),
           ],

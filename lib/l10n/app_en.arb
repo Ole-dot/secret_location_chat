@@ -1,0 +1,239 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Secret Location Chat",
+  "@appTitle": { "description": "Application title" },
+
+  "commonBack": "← Back",
+  "@commonBack": { "description": "Generic back link" },
+  "commonBackToLogin": "← Back to login",
+  "commonCancel": "CANCEL",
+  "commonSave": "Save",
+  "commonSend": "Send",
+  "commonDelete": "DELETE",
+  "commonDownload": "DOWNLOAD",
+  "commonYes": "Yes",
+  "commonNo": "No",
+
+  "authRequiredChat": "Chat unavailable",
+  "@authRequiredChat": { "description": "Shown when chat cannot be opened" },
+  "authRequiredStones": "Sign in to buy Stones",
+  "authRequiredGifts": "Sign in to send gifts",
+  "authRequiredTerminalHack": "Sign in for TERMINAL HACK",
+
+  "errorGeneric": "AN ERROR OCCURRED. TRY AGAIN LATER",
+  "errorNoConnection": "NO SERVER CONNECTION",
+  "errorUserNotFound": "USER NOT FOUND",
+  "errorWrongPassword": "WRONG PASSWORD",
+  "errorEmailInUse": "ACCOUNT ALREADY EXISTS",
+  "errorInvalidEmail": "INVALID EMAIL",
+  "errorTooManyRequests": "TOO MANY ATTEMPTS. TRY AGAIN LATER",
+  "errorWeakPassword": "PASSWORD TOO WEAK",
+  "errorUserDisabled": "ACCOUNT BLOCKED",
+  "errorEmailSignInDisabled": "EMAIL SIGN-IN DISABLED",
+  "errorEnterEmail": "ENTER EMAIL",
+  "errorCreateAccountFailed": "FAILED TO CREATE ACCOUNT",
+  "errorGeoUnavailable": "Geolocation unavailable",
+  "errorUserUnauthorized": "USER NOT AUTHORIZED",
+  "errorStoreUnavailable": "STORE UNAVAILABLE",
+  "errorPurchaseFailed": "PURCHASE ERROR",
+  "errorProfileNotFound": "PROFILE NOT FOUND",
+  "errorInvalidAmount": "INVALID AMOUNT",
+
+  "validationInvalidEmail": "Invalid email format",
+  "validationPasswordMin": "Minimum 6 characters",
+
+  "giftDescNeonRose": "A digital rose with a neon glow",
+  "giftDescCyberCoffee": "A hot drink from an underground bar",
+  "giftDescDataCrystal": "A rare crystal of encrypted data",
+  "giftDescGhostDrone": "A mini-drone for covert delivery",
+
+  "authTitle": "LOGIN",
+  "authSubtitle": "// IDENTIFICATION //",
+  "fieldPassword": "PASSWORD",
+  "authLoginButton": "Login",
+  "authForgotPassword": "Forgot password? → RESET",
+  "authToRegister": "New here? → SIGN UP",
+
+  "resetTitle": "RESET",
+  "resetSubtitle": "// ACCESS RECOVERY //",
+  "resetEmailLanguage": "EMAIL LANGUAGE",
+  "resetSendLink": "Send link",
+  "resetLinkSent": "Password reset link sent to your email",
+  "resetDeviceLangKaz": "(device language: KAZ)",
+  "resetDeviceLangRus": "(device language: RUS)",
+  "resetLangRus": "RUS",
+  "resetLangKaz": "KAZ",
+
+  "registerTitle": "SIGN UP",
+  "registerSubtitle": "// CREATE IDENTITY //",
+  "registerNickLabel": "NICKNAME (optional)",
+  "registerNickHint": "empty → Acid Raccoon",
+  "registerNickNote": "// otherwise a random cyber-nick on sign-up //",
+  "registerButton": "Sign up",
+  "registerHaveAccount": "Already have an account? → LOGIN",
+
+  "splashSubtitle": "// ANONYMOUS GEO-MESSENGER //",
+  "splashEnableLocation": "⦿  Enable location",
+  "splashLogin": "Login",
+  "splashNoAccount": "No account? Sign up →",
+
+  "chatTitle": "GLOBAL CHAT",
+  "chatYouTyped": "YOU TYPED",
+  "chatInputHint": "Message to global chat...",
+
+  "editIdentityEnterNick": "ENTER NICKNAME",
+  "editIdentityUpdated": "IDENTITY UPDATED",
+  "editIdentityTitle": "CHANGE IDENTITY",
+  "editIdentityNickLabel": "NICKNAME",
+  "editIdentityNickHint": "Acid Raccoon",
+  "editIdentityAvatarLabel": "AVATAR",
+
+  "geolocationTitle": "GEOLOCATION",
+  "securityTitle": "SECURITY",
+  "notificationsTitle": "NOTIFICATIONS",
+  "languageTitle": "LANGUAGE",
+
+  "settingsTitle": "SETTINGS",
+  "settingsConfigure": "Configure",
+  "settingsNotifications": "NOTIFICATIONS",
+  "settingsSecurity": "SECURITY",
+  "settingsLanguage": "LANGUAGE",
+  "volumeLabel": "NOTIFICATION VOLUME",
+
+  "offlineMapsTitle": "OFFLINE MAPS",
+  "offlineMapsHint": "DOWNLOAD MAP AREAS IN ADVANCE — IN THE FIELD WITHOUT CONNECTION TILES WILL BE TAKEN FROM CACHE.",
+  "offlineMapsSoon": "// SOON: SELECT A RECTANGLE ON THE MAP //",
+  "offlineRegionNorth": "NORTH SECTOR",
+  "offlineRegionBaseCamp": "BASE CAMP",
+  "offlineRegionSouthValley": "SOUTH VALLEY",
+  "offlineRegionPolygonA7": "POLYGON A-7",
+  "offlineRegionCached": "{name} — CACHED",
+  "@offlineRegionCached": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "offlineRegionDeleted": "{name} — DELETED",
+  "@offlineRegionDeleted": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "logoutTitle": "LOG OUT",
+  "logoutConfirm": "END SESSION AND LOG OUT OF YOUR ACCOUNT?",
+  "logoutButton": "LOG OUT",
+
+  "menuHeader": "// PROFILE · SYSTEM //",
+  "menuFindUser": "FIND USER",
+  "menuChangeIdentity": "CHANGE IDENTITY",
+  "menuChangePlan": "CHANGE PLAN",
+  "menuOfflineMaps": "OFFLINE MAPS",
+  "menuSettings": "SETTINGS",
+  "menuLogout": "LOG OUT",
+
+  "searchEnterEmail": "ENTER EMAIL",
+  "searchTitle": "FIND USER",
+  "searchSubtitle": "// SEARCH BY EXACT EMAIL //",
+  "searchButton": "Search",
+  "searchNotFound": "USER NOT FOUND",
+  "searchTapToSelect": "TAP TO SELECT",
+  "searchSendGift": "SEND GIFT",
+
+  "mapStyleDark": "Dark",
+  "mapStyleSatellite": "3D / Satellite",
+  "mapStyleMinimal": "Minimal",
+  "mapCloseAppTitle": "Close app?",
+  "mapSignalsCount": "{count} signals",
+  "@mapSignalsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "mapPremiumHint": "🔒 Available in Premium — tap the plan to switch",
+
+  "messagePendingSync": "Awaiting upload to server",
+  "messagePendingSyncAt": "⏳ awaiting sync · {time}",
+  "@messagePendingSyncAt": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "messageRepliesCount": "{count} replies",
+  "@messageRepliesCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "messageToChat": "TO CHAT →",
+
+  "sendMessageTitle": "NEW MESSAGE",
+  "sendMessageHint": "What's happening here?",
+  "sendMessageTtl": "TIME TO LIVE",
+  "sendAnonymously": "◉  Send anonymously",
+  "sendPremiumHint": "🔒 Available in Premium (₸5000/mo)",
+
+  "decryptionInProgress": "[ DECRYPTING TRANSMISSION... ]",
+
+  "giftInsufficientStones": "NOT ENOUGH STONES",
+  "giftSent": "GIFT SENT",
+  "giftCannotSendSelf": "CANNOT SEND TO YOURSELF",
+  "giftUserNotFound": "USER NOT FOUND",
+
+  "stonesSubtitle": "// IN-GAME CURRENCY //",
+  "stonesDescription": "Top up your Stones balance to send gifts in chat.",
+  "stonesRefreshStore": "REFRESH STORE",
+
+  "planTitle": "PRICING PLAN",
+  "planMissingHint": "Open plans from the map",
+  "planToMap": "To map",
+  "planTestModeBanner": "Test mode — switch the plan and instantly check all features",
+  "planBadgeHit": "HOT",
+  "planBadgeActive": "ACTIVE",
+  "planSelect": "SELECT",
+  "planActivate": "Activate {plan}",
+  "@planActivate": {
+    "placeholders": { "plan": { "type": "String" } }
+  },
+  "planActivatedSnack": "Plan {plan} activated",
+  "@planActivatedSnack": {
+    "placeholders": { "plan": { "type": "String" } }
+  },
+  "planFreeSubtitle": "Basic",
+  "planPremiumSubtitle": "Popular",
+  "planEnterpriseSubtitle": "For teams and business",
+  "planFeatMsg5PerDay": "Up to 5 messages per day",
+  "planFeatTtl1h": "TTL up to 1 hour",
+  "planFeatStandardNick": "Standard nick on the map",
+  "planFeatAnonMode": "Anonymous mode",
+  "planFeatTtl24h": "TTL up to 24 hours",
+  "planFeatAvatarsGifts": "Avatars and gifts",
+  "planFeatTotemCompass": "Totem Compass",
+  "planFeatUnityGame": "Unity game",
+  "planFeatPrivateZones": "Private zones",
+  "planFeatUnlimitedMsg": "Unlimited messages",
+  "planFeatAnonShadow": "Anonymous mode (Shadow_XXXX)",
+  "planFeatCustomAvatars": "Custom avatars",
+  "planFeatGiftsToUsers": "Gifts to other users",
+  "planFeatApiIntegrations": "API integrations",
+  "planFeatAllPremium": "Everything from Premium",
+  "planFeatPrivateGeozones": "Private geozones",
+  "planFeatTeamChats": "Team chats",
+  "planFeatActivityAnalytics": "Activity analytics",
+  "planFeatWhiteLabel": "White-label branding",
+  "planFeatPrioritySupport": "Priority support",
+  "planFeatE2eEncryption": "E2E encryption",
+  "planFeatSlaGuarantees": "SLA guarantees",
+
+  "modeAnon": "ANON",
+  "modeOpen": "OPEN",
+
+  "unitMin": "min",
+  "unitHour": "h",
+  "unitMb": "MB",
+  "perMonth": " / mo",
+
+  "durationHoursMinutes": "{h}h {m}min",
+  "@durationHoursMinutes": {
+    "placeholders": { "h": { "type": "int" }, "m": { "type": "int" } }
+  },
+  "durationMinutes": "{m}min",
+  "@durationMinutes": {
+    "placeholders": { "m": { "type": "int" } }
+  },
+  "durationSeconds": "{s}s",
+  "@durationSeconds": {
+    "placeholders": { "s": { "type": "int" } }
+  }
+}

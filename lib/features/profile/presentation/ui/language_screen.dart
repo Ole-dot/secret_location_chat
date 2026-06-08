@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/localization/language_cubit.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class LanguageScreen extends StatelessWidget {
   const LanguageScreen({super.key});
@@ -19,9 +20,9 @@ class LanguageScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        title: const Text(
-          'ЯЗЫК',
-          style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
+        title: Text(
+          AppLocalizations.of(context).languageTitle,
+          style: const TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),

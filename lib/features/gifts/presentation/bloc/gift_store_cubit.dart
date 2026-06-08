@@ -116,7 +116,7 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
   }) async {
     if (state.isSending) return;
     if (currentBalance < gift.stoneCost) {
-      emit(state.copyWith(error: 'НЕДОСТАТОЧНО STONES'));
+      emit(state.copyWith(error: 'giftInsufficientStones'));
       return;
     }
 
@@ -140,7 +140,7 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
       emit(state.copyWith(
         isSending: false,
         clearSendingGiftId: true,
-        successMessage: 'ПОДАРОК ОТПРАВЛЕН',
+        successMessage: 'giftSent',
         clearError: true,
       ));
     } catch (err) {
@@ -155,9 +155,9 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
   String _mapGiftError(Object err) {
     if (err is StateError) {
       return switch (err.message) {
-        'INSUFFICIENT_STONES' => 'НЕДОСТАТОЧНО STONES',
-        'CANNOT_GIFT_SELF' => 'НЕЛЬЗЯ ОТПРАВИТЬ СЕБЕ',
-        'USER_NOT_FOUND' => 'ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН',
+        'INSUFFICIENT_STONES' => 'giftInsufficientStones',
+        'CANNOT_GIFT_SELF' => 'giftCannotSendSelf',
+        'USER_NOT_FOUND' => 'giftUserNotFound',
         _ => mapFirebaseError(err),
       };
     }
@@ -170,7 +170,7 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
   }) async {
     if (state.isBuying || state.isSending) return;
     if (currentBalance < gift.stoneCost) {
-      emit(state.copyWith(error: 'НЕДОСТАТОЧНО STONES'));
+      emit(state.copyWith(error: 'giftInsufficientStones'));
       return;
     }
     emit(state.copyWith(

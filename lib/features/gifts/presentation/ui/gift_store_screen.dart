@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/cyberpunk_button.dart';
 import 'package:secret_location_chat/data/models/gift_catalog_item.dart';
@@ -11,6 +12,7 @@ import 'package:secret_location_chat/features/gifts/gift_store_launch_args.dart'
 import 'package:secret_location_chat/features/gifts/presentation/bloc/gift_store_cubit.dart';
 import 'package:secret_location_chat/features/stones/presentation/bloc/stones_cubit.dart';
 import 'package:secret_location_chat/features/stones/presentation/ui/stones_balance_chip.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 const _localGiftCatalog = <GiftCatalogItem>[
   GiftCatalogItem(
@@ -184,7 +186,10 @@ class GiftStoreScreen extends StatelessWidget {
                 SnackBar(
                   backgroundColor: AppColors.surfaceCard,
                   content: Text(
-                    state.successMessage!,
+                    l10nByKey(
+                      AppLocalizations.of(context),
+                      state.successMessage!,
+                    ),
                     style: const TextStyle(fontFamily: 'monospace'),
                   ),
                 ),
@@ -257,7 +262,7 @@ class _StoreTab extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              state.error!,
+              l10nByKey(AppLocalizations.of(context), state.error!),
               style: const TextStyle(
                 color: AppColors.neonRed,
                 fontFamily: 'monospace',

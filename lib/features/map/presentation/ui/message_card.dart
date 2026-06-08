@@ -4,6 +4,7 @@ import 'package:secret_location_chat/core/localization/language_cubit.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/data/models/geo_message_model.dart';
 import 'package:secret_location_chat/features/map/presentation/ui/widgets/cyber_decryption_text.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class MessageCard extends StatelessWidget {
   final GeoMessage message;
@@ -21,9 +22,10 @@ class MessageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final ttlProgress = message.ttlProgress;
     final remaining = message.expiresAt.difference(DateTime.now());
-    final timeStr = _formatRemaining(remaining);
+    final timeStr = _formatRemaining(remaining, l10n);
 
     return Material(
       color: Colors.transparent,
@@ -108,7 +110,7 @@ class MessageCard extends StatelessWidget {
                               if (message.isPendingSync) ...[
                                 const SizedBox(width: 6),
                                 Tooltip(
-                                  message: 'Ожидает отправки на сервер',
+                                  message: l10n.messagePendingSync,
                                   child: Icon(
                                     Icons.schedule,
                                     size: 14,
@@ -120,7 +122,7 @@ class MessageCard extends StatelessWidget {
                           ),
                           Text(
                             message.isPendingSync
-                                ? '⏳ ожидает синхронизации · $timeStr'
+                                ? l10n.messagePendingSyncAt(timeStr)
                                 : '⏱ $timeStr',
                             style: TextStyle(
                               color: message.isPendingSync
@@ -163,7 +165,7 @@ class MessageCard extends StatelessWidget {
                   children: [
                     if (message.replyCount > 0)
                       Text(
-                        '${message.replyCount} ответов',
+                        l10n.messageRepliesCount(message.replyCount),
                         style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
                       ),
                     const Spacer(),
@@ -175,9 +177,9 @@ class MessageCard extends StatelessWidget {
                           border: Border.all(color: AppColors.neonRed),
                           borderRadius: BorderRadius.circular(2),
                         ),
-                        child: const Text(
-                          'В ЧАТ →',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.messageToChat,
+                          style: const TextStyle(
                             color: AppColors.neonRed,
                             fontSize: 11,
                             letterSpacing: 2,
@@ -198,9 +200,9 @@ class MessageCard extends StatelessWidget {
     );
   }
 
-  String _formatRemaining(Duration d) {
-    if (d.inHours > 0) return '${d.inHours}ч ${d.inMinutes.remainder(60)}мин';
-    if (d.inMinutes > 0) return '${d.inMinutes}мин';
-    return '${d.inSeconds}с';
+  String _formatRemaining(Duration d, AppLocalizations l10n) {
+    if (d.inHours > 0) return l10n.durationHoursMinutes(d.inHours, d.inMinutes.remainder(60));
+    if (d.inMinutes > 0) return l10n.durationMinutes(d.inMinutes);
+    return l10n.durationSeconds(d.inSeconds);
   }
 }

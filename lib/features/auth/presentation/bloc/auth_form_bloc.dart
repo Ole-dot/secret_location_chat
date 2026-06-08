@@ -51,13 +51,13 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
   String? _validateEmail(String email) {
     if (email.isEmpty) return null; // не показываем ошибку пока пусто
     final emailRegExp = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-    if (!emailRegExp.hasMatch(email)) return 'Неверный формат email';
+    if (!emailRegExp.hasMatch(email)) return 'validationInvalidEmail';
     return null;
   }
 
   String? _validatePassword(String password) {
     if (password.isEmpty) return null;
-    if (password.length < 6) return 'Минимум 6 символов';
+    if (password.length < 6) return 'validationPasswordMin';
     return null;
   }
 }

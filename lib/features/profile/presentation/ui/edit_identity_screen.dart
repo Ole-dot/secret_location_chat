@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/auth/firebase_error_messages.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/constants/user_avatars.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/app_auth_bloc.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/map_bloc.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class EditIdentityScreen extends StatefulWidget {
   const EditIdentityScreen({super.key});
@@ -43,9 +45,9 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
     final nickname = _nicknameCtrl.text.trim();
     if (nickname.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: AppColors.neonRedDark,
-          content: Text('ВВЕДИТЕ НИКНЕЙМ'),
+          content: Text(AppLocalizations.of(context).editIdentityEnterNick),
         ),
       );
       return;
@@ -65,9 +67,9 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
       } catch (_) {}
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: AppColors.surfaceCard,
-          content: Text('ЛИЧНОСТЬ ОБНОВЛЕНА'),
+          content: Text(AppLocalizations.of(context).editIdentityUpdated),
         ),
       );
       context.pop();
@@ -76,7 +78,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: AppColors.neonRedDark,
-          content: Text(mapFirebaseError(e)),
+          content: Text(l10nByKey(AppLocalizations.of(context), mapFirebaseError(e))),
         ),
       );
     } finally {
@@ -86,13 +88,14 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0A),
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
-        title: const Text(
-          'СМЕНИТЬ ЛИЧНОСТЬ',
-          style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
+        title: Text(
+          l10n.editIdentityTitle,
+          style: const TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
@@ -104,9 +107,9 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'НИКНЕЙМ',
-              style: TextStyle(
+            Text(
+              l10n.editIdentityNickLabel,
+              style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 10,
                 letterSpacing: 3,
@@ -117,15 +120,15 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
               controller: _nicknameCtrl,
               style: const TextStyle(color: AppColors.textPrimary),
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                hintText: 'Кислотный Енот',
-                hintStyle: TextStyle(color: AppColors.textDisabled),
+              decoration: InputDecoration(
+                hintText: l10n.editIdentityNickHint,
+                hintStyle: const TextStyle(color: AppColors.textDisabled),
               ),
             ),
             const SizedBox(height: 28),
-            const Text(
-              'АВАТАР',
-              style: TextStyle(
+            Text(
+              l10n.editIdentityAvatarLabel,
+              style: const TextStyle(
                 color: AppColors.neonRed,
                 fontSize: 10,
                 letterSpacing: 3,
@@ -198,7 +201,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
             ),
             const SizedBox(height: 32),
             SlcButton(
-              text: 'Сохранить',
+              text: l10n.commonSave,
               isLoading: _saving,
               onTap: _save,
             ),

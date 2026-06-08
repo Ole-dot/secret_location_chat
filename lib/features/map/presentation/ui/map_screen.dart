@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/map/map_tile_cache.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/theme_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
@@ -27,28 +29,35 @@ import 'package:secret_location_chat/core/constants/user_avatars.dart';
 
 class _TileConfig {
   final String url;
-  final String label;
   final String icon;
-  const _TileConfig(this.url, this.label, this.icon);
+  const _TileConfig(this.url, this.icon);
 }
 
 const _tileConfigs = {
   MapStyle.dark: _TileConfig(
     'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    'Тёмная',
     '◼',
   ),
   MapStyle.satellite: _TileConfig(
     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    '3D / Спутник',
     '⬡',
   ),
   MapStyle.minimal: _TileConfig(
     'https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-    'Минимал',
     '◻',
   ),
 };
+
+String _mapStyleLabel(AppLocalizations l10n, MapStyle style) {
+  switch (style) {
+    case MapStyle.dark:
+      return l10n.mapStyleDark;
+    case MapStyle.satellite:
+      return l10n.mapStyleSatellite;
+    case MapStyle.minimal:
+      return l10n.mapStyleMinimal;
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -100,6 +109,7 @@ class MapScreen extends StatelessWidget {
 }
 
 void _confirmExit(BuildContext context) {
+  final l10n = AppLocalizations.of(context);
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -108,23 +118,23 @@ void _confirmExit(BuildContext context) {
         borderRadius: BorderRadius.circular(8),
         side: const BorderSide(color: AppColors.borderRed),
       ),
-      title: const Text(
-        'Close app?',
-        style: TextStyle(color: AppColors.textPrimary, fontSize: 16),
+      title: Text(
+        l10n.mapCloseAppTitle,
+        style: const TextStyle(color: AppColors.textPrimary, fontSize: 16),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('No', style: TextStyle(color: AppColors.textSecondary)),
+          child: Text(l10n.commonNo, style: const TextStyle(color: AppColors.textSecondary)),
         ),
         TextButton(
           onPressed: () {
             Navigator.pop(ctx);
             SystemNavigator.pop();
           },
-          child: const Text(
-            'Yes',
-            style: TextStyle(color: AppColors.neonRed, fontWeight: FontWeight.w700),
+          child: Text(
+            l10n.commonYes,
+            style: const TextStyle(color: AppColors.neonRed, fontWeight: FontWeight.w700),
           ),
         ),
       ],
@@ -202,7 +212,7 @@ class _MapBodyState extends State<_MapBody> {
         if (state.error != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: AppColors.neonRedDark,
-            content: Text(state.error!, style: const TextStyle(color: AppColors.white)),
+            content: Text(l10nByKey(AppLocalizations.of(context), state.error!), style: const TextStyle(color: AppColors.white)),
           ));
         }
       },
@@ -212,6 +222,7 @@ class _MapBodyState extends State<_MapBody> {
             : _defaultCenter;
 
         final tile = _tileConfigs[state.mapStyle]!;
+        final l10n = AppLocalizations.of(context);
         final sheetPeek = MediaQuery.sizeOf(context).height * 0.1;
 
         return Scaffold(
@@ -275,7 +286,7 @@ class _MapBodyState extends State<_MapBody> {
                     ),
 
                     const RichAttributionWidget(
-                      attributions: [TextSourceAttribution('© Stadia / ArcGIS / OSM')],
+                      attributions: [TextSourceAttribution('© CARTO / ArcGIS / OSM')],
                     ),
                   ],
                 ),
@@ -328,7 +339,7 @@ class _MapBodyState extends State<_MapBody> {
                               children: [
                                 Text(tile.icon, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13)),
                                 const SizedBox(width: 5),
-                                Text(tile.label,
+                                Text(_mapStyleLabel(l10n, state.mapStyle),
                                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 10, letterSpacing: 1)),
                               ],
                             ),
@@ -377,7 +388,7 @@ class _MapBodyState extends State<_MapBody> {
                             borderColor: state.isAnonymous ? AppColors.neonRed : AppColors.border,
                             bgColor: state.isAnonymous ? AppColors.neonRed.withValues(alpha: 0.15) : null,
                             child: Text(
-                              state.isAnonymous ? '◉ АНОН' : '○ OPEN',
+                              state.isAnonymous ? '◉ ${l10n.modeAnon}' : '○ ${l10n.modeOpen}',
                               style: TextStyle(
                                 color: state.isAnonymous ? AppColors.neonRed : AppColors.textSecondary,
                                 fontSize: 10, letterSpacing: 1,
@@ -424,7 +435,7 @@ class _MapBodyState extends State<_MapBody> {
                   left: 12,
                   bottom: sheetPeek + 8,
                   child: _HudBox(
-                    child: Text('${state.messages.length} сигналов',
+                    child: Text(l10n.mapSignalsCount(state.messages.length),
                       style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
                   ),
                 ),
@@ -481,10 +492,10 @@ class _MapBodyState extends State<_MapBody> {
   }
 
   void _showPremiumHint(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: AppColors.surfaceCard,
-      content: Text('🔒 Доступно в Premium — нажми на тариф чтобы сменить',
-        style: TextStyle(color: AppColors.neonRed)),
+      content: Text(AppLocalizations.of(context).mapPremiumHint,
+        style: const TextStyle(color: AppColors.neonRed)),
     ));
   }
 

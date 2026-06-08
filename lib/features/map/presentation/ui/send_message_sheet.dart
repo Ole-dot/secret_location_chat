@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/map_bloc.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class SendMessageSheet extends StatefulWidget {
   const SendMessageSheet({super.key});
@@ -17,7 +18,9 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
   int _ttlMinutes = 60;
 
   final List<int> _ttlOptions = [10, 30, 60, 180, 720, 1440];
-  final List<String> _ttlLabels = ['10 мин', '30 мин', '1 ч', '3 ч', '12 ч', '24 ч'];
+
+  String _ttlLabel(int minutes, AppLocalizations l10n) =>
+      minutes < 60 ? '$minutes ${l10n.unitMin}' : '${minutes ~/ 60} ${l10n.unitHour}';
 
   @override
   void initState() {
@@ -33,6 +36,7 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isPremium = context.read<MapBloc>().state.isPremium;
 
     return Container(
@@ -67,9 +71,9 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
           // Заголовок
           Row(
             children: [
-              const Text(
-                'НОВОЕ СООБЩЕНИЕ',
-                style: TextStyle(
+              Text(
+                l10n.sendMessageTitle,
+                style: const TextStyle(
                   color: AppColors.neonRed,
                   fontSize: 12,
                   letterSpacing: 3,
@@ -103,7 +107,7 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        _isAnon ? 'АНОН' : 'ОТКРЫТО',
+                        _isAnon ? l10n.modeAnon : l10n.modeOpen,
                         style: TextStyle(
                           color: _isAnon ? AppColors.neonRed : AppColors.textSecondary,
                           fontSize: 10,
@@ -130,10 +134,10 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
             style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
             maxLines: 3,
             autofocus: true,
-            decoration: const InputDecoration(
-              hintText: 'Что происходит здесь?',
-              hintStyle: TextStyle(color: AppColors.textDisabled),
-              border: OutlineInputBorder(
+            decoration: InputDecoration(
+              hintText: l10n.sendMessageHint,
+              hintStyle: const TextStyle(color: AppColors.textDisabled),
+              border: const OutlineInputBorder(
                 borderSide: BorderSide(color: AppColors.border),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
               ),
@@ -143,9 +147,9 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
           const SizedBox(height: 16),
 
           // TTL выбор
-          const Text(
-            'ВРЕМЯ ЖИЗНИ',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 10, letterSpacing: 2),
+          Text(
+            l10n.sendMessageTtl,
+            style: const TextStyle(color: AppColors.textSecondary, fontSize: 10, letterSpacing: 2),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -171,7 +175,7 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        _ttlLabels[i],
+                        _ttlLabel(_ttlOptions[i], l10n),
                         style: TextStyle(
                           color: isSelected ? AppColors.white : AppColors.textSecondary,
                           fontSize: 12,
@@ -191,7 +195,7 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
           const SizedBox(height: 20),
 
           SlcButton(
-            text: _isAnon ? '◉  Отправить анонимно' : 'Отправить',
+            text: _isAnon ? l10n.sendAnonymously : l10n.commonSend,
             onTap: () {
               final text = _ctrl.text.trim();
               if (text.isEmpty) return;
@@ -212,11 +216,11 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
 
   void _showPremiumHint(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         backgroundColor: AppColors.surfaceCard,
         content: Text(
-          '🔒 Доступно в Premium (₸5000/мес)',
-          style: TextStyle(color: AppColors.neonRed),
+          AppLocalizations.of(context).sendPremiumHint,
+          style: const TextStyle(color: AppColors.neonRed),
         ),
       ),
     );

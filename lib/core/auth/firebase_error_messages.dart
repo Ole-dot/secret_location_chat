@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-const _defaultMessage = 'ПРОИЗОШЛА ОШИБКА. ПОПРОБУЙТЕ ПОЗЖЕ';
-const _noConnectionMessage = 'НЕТ СВЯЗИ С СЕРВЕРОМ';
+const _defaultMessage = 'errorGeneric';
+const _noConnectionMessage = 'errorNoConnection';
 
-/// Единый маппер Firebase Auth / Firestore / сетевых ошибок для UI (RU, CAPS).
+/// Единый маппер Firebase Auth / Firestore / сетевых ошибок.
+/// Возвращает СТАБИЛЬНЫЙ КЛЮЧ ошибки (см. ARB / [l10nByKey]), а не текст —
+/// локализация выполняется в UI через `l10nByKey(l10n, key)`.
 String mapFirebaseError(Object error) {
   if (error is FirebaseAuthException) {
     return _messageForCode(error.code, plugin: 'firebase_auth');
@@ -36,39 +38,39 @@ String _messageForCode(String code, {String? plugin}) {
 
   switch (full) {
     case 'firebase_auth/user-not-found':
-      return 'ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН';
+      return 'errorUserNotFound';
     case 'firebase_auth/wrong-password':
-      return 'НЕВЕРНЫЙ ПАРОЛЬ';
+      return 'errorWrongPassword';
     case 'firebase_auth/email-already-in-use':
-      return 'АККАУНТ УЖЕ СУЩЕСТВУЕТ';
+      return 'errorEmailInUse';
     case 'firebase_auth/invalid-email':
-      return 'НЕКОРРЕКТНЫЙ EMAIL';
+      return 'errorInvalidEmail';
     case 'cloud_firestore/unavailable':
       return _noConnectionMessage;
   }
 
   switch (normalized) {
     case 'user-not-found':
-      return 'ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН';
+      return 'errorUserNotFound';
     case 'wrong-password':
     case 'invalid-credential':
-      return 'НЕВЕРНЫЙ ПАРОЛЬ';
+      return 'errorWrongPassword';
     case 'email-already-in-use':
-      return 'АККАУНТ УЖЕ СУЩЕСТВУЕТ';
+      return 'errorEmailInUse';
     case 'invalid-email':
-      return 'НЕКОРРЕКТНЫЙ EMAIL';
+      return 'errorInvalidEmail';
     case 'unavailable':
     case 'network-request-failed':
     case 'deadline-exceeded':
       return _noConnectionMessage;
     case 'too-many-requests':
-      return 'СЛИШКОМ МНОГО ПОПЫТОК. ПОПРОБУЙТЕ ПОЗЖЕ';
+      return 'errorTooManyRequests';
     case 'weak-password':
-      return 'СЛИШКОМ СЛАБЫЙ ПАРОЛЬ';
+      return 'errorWeakPassword';
     case 'user-disabled':
-      return 'АККАУНТ ЗАБЛОКИРОВАН';
+      return 'errorUserDisabled';
     case 'operation-not-allowed':
-      return 'ВХОД ЧЕРЕЗ EMAIL ОТКЛЮЧЁН';
+      return 'errorEmailSignInDisabled';
     default:
       return _defaultMessage;
   }

@@ -5,6 +5,7 @@ import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/map_bloc.dart';
 import 'package:secret_location_chat/features/profile/presentation/ui/profile_logout_dialog.dart';
 import 'package:secret_location_chat/features/profile/presentation/ui/search_user_sheet.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 /// Киберпанк-меню профиля (modal bottom sheet).
 class ProfileMenuSheet extends StatelessWidget {
@@ -41,6 +42,7 @@ class ProfileMenuSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return Padding(
@@ -99,9 +101,9 @@ class ProfileMenuSheet extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      '// ПРОФИЛЬ · СИСТЕМА //',
-                      style: TextStyle(
+                    Text(
+                      l10n.menuHeader,
+                      style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 10,
                         letterSpacing: 2,
@@ -136,7 +138,7 @@ class ProfileMenuSheet extends StatelessWidget {
                     ),
                     _MenuItem(
                       icon: Icons.person_search_outlined,
-                      label: 'НАЙТИ ПОЛЬЗОВАТЕЛЯ',
+                      label: l10n.menuFindUser,
                       onTap: () {
                         Navigator.pop(context);
                         SearchUserSheet.show(context);
@@ -144,7 +146,7 @@ class ProfileMenuSheet extends StatelessWidget {
                     ),
                     _MenuItem(
                       icon: Icons.face_retouching_natural,
-                      label: 'СМЕНИТЬ ЛИЧНОСТЬ',
+                      label: l10n.menuChangeIdentity,
                       onTap: () {
                         Navigator.pop(context);
                         context.push('/edit-identity', extra: mapBloc);
@@ -152,7 +154,7 @@ class ProfileMenuSheet extends StatelessWidget {
                     ),
                     _MenuItem(
                       icon: Icons.workspace_premium_outlined,
-                      label: 'СМЕНИТЬ ТАРИФ',
+                      label: l10n.menuChangePlan,
                       onTap: () {
                         Navigator.pop(context);
                         context.push('/plan', extra: mapBloc);
@@ -160,7 +162,7 @@ class ProfileMenuSheet extends StatelessWidget {
                     ),
                     _MenuItem(
                       icon: Icons.offline_bolt_outlined,
-                      label: 'ОФФЛАЙН КАРТЫ',
+                      label: l10n.menuOfflineMaps,
                       onTap: () {
                         Navigator.pop(context);
                         context.push('/offline-maps');
@@ -168,7 +170,7 @@ class ProfileMenuSheet extends StatelessWidget {
                     ),
                     _MenuItem(
                       icon: Icons.settings_outlined,
-                      label: 'НАСТРОЙКИ',
+                      label: l10n.menuSettings,
                       onTap: () {
                         Navigator.pop(context);
                         context.push('/settings');
@@ -179,7 +181,7 @@ class ProfileMenuSheet extends StatelessWidget {
                     const SizedBox(height: 8),
                     _MenuItem(
                       icon: Icons.logout,
-                      label: 'ВЫХОД',
+                      label: l10n.menuLogout,
                       labelColor: AppColors.neonRed,
                       onTap: () {
                         Navigator.pop(context);

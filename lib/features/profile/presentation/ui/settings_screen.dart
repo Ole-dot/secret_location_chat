@@ -3,19 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/localization/language_cubit.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0A),
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
-        title: const Text(
-          'НАСТРОЙКИ',
-          style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
+        title: Text(
+          l10n.settingsTitle,
+          style: const TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
@@ -28,21 +30,21 @@ class SettingsScreen extends StatelessWidget {
           children: [
             _SettingsTile(
               icon: Icons.notifications_outlined,
-              title: 'УВЕДОМЛЕНИЯ',
-              subtitle: 'Настроить',
+              title: l10n.settingsNotifications,
+              subtitle: l10n.settingsConfigure,
               onTap: () => context.push('/notifications'),
             ),
             _SettingsTile(
               icon: Icons.security_outlined,
-              title: 'БЕЗОПАСНОСТЬ',
-              subtitle: 'Настроить',
+              title: l10n.settingsSecurity,
+              subtitle: l10n.settingsConfigure,
               onTap: () => context.push('/security'),
             ),
             BlocBuilder<LanguageCubit, LanguageState>(
               builder: (context, languageState) {
                 return _SettingsTile(
                   icon: Icons.language_outlined,
-                  title: 'ЯЗЫК',
+                  title: l10n.settingsLanguage,
                   subtitle: _languageLabel(languageState.languageCode),
                   onTap: () => context.push('/language'),
                 );

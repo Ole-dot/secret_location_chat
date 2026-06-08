@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:secret_location_chat/core/localization/language_cubit.dart';
+import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
+import 'package:secret_location_chat/l10n/app_localizations.dart';
 import 'package:secret_location_chat/data/models/chat_message_model.dart';
 import 'package:secret_location_chat/data/models/user_log_event.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/events_cubit.dart';
@@ -213,7 +215,7 @@ class _EventsLogList extends StatelessWidget {
           const Icon(Icons.warning_amber, color: AppColors.neonRed, size: 28),
           const SizedBox(height: 12),
           Text(
-            error!,
+            l10nByKey(AppLocalizations.of(context), error!),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.neonRed,
@@ -279,7 +281,7 @@ class _MyLogsList extends StatelessWidget {
           const Icon(Icons.warning_amber, color: AppColors.neonRed, size: 28),
           const SizedBox(height: 12),
           Text(
-            error!,
+            l10nByKey(AppLocalizations.of(context), error!),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.neonRed,

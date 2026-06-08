@@ -83,7 +83,7 @@ class StonesCubit extends Cubit<StonesState> {
   Future<void> _init({required bool enableStore}) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null || uid != userId) {
-      emit(state.copyWith(isLoading: false, error: 'ПОЛЬЗОВАТЕЛЬ НЕ АВТОРИЗОВАН'));
+      emit(state.copyWith(isLoading: false, error: 'errorUserUnauthorized'));
       return;
     }
 
@@ -140,7 +140,7 @@ class StonesCubit extends Cubit<StonesState> {
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null || uid != userId) {
-      emit(state.copyWith(error: 'ПОЛЬЗОВАТЕЛЬ НЕ АВТОРИЗОВАН'));
+      emit(state.copyWith(error: 'errorUserUnauthorized'));
       return false;
     }
 
@@ -178,7 +178,7 @@ class StonesCubit extends Cubit<StonesState> {
         emit(state.copyWith(
           isLoading: false,
           storeAvailable: false,
-          error: 'МАГАЗИН НЕДОСТУПЕН',
+          error: 'errorStoreUnavailable',
         ));
         return;
       }
@@ -236,7 +236,7 @@ class StonesCubit extends Cubit<StonesState> {
         emit(state.copyWith(
           isPurchasing: false,
           clearPurchasingProductId: true,
-          error: purchase.error?.message ?? 'ОШИБКА ПОКУПКИ',
+          error: purchase.error?.message ?? 'errorPurchaseFailed',
         ));
         if (purchase.pendingCompletePurchase) {
           await _iap.completePurchase(purchase);
@@ -315,8 +315,8 @@ class StonesCubit extends Cubit<StonesState> {
   String _mapPurchaseError(Object err) {
     if (err is StateError) {
       return switch (err.message) {
-        'USER_NOT_FOUND' => 'ПРОФИЛЬ НЕ НАЙДЕН',
-        'INVALID_STONES_AMOUNT' => 'НЕВЕРНАЯ СУММА',
+        'USER_NOT_FOUND' => 'errorProfileNotFound',
+        'INVALID_STONES_AMOUNT' => 'errorInvalidAmount',
         _ => mapFirebaseError(err),
       };
     }
