@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/core/localization/l10n_error.dart';
+import 'package:secret_location_chat/core/ui/cyber_snackbar.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
 import 'package:secret_location_chat/features/register/presentation/bloc/register_bloc.dart';
 import 'package:secret_location_chat/l10n/app_localizations.dart';
@@ -46,11 +47,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (state is RegisterSuccessState) {
             context.go('/map');
           } else if (state is RegisterErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: AppColors.neonRedDark,
-                content: Text(l10nByKey(l10n, state.message), style: const TextStyle(color: AppColors.white)),
-              ),
+            CyberSnackBar.showError(
+              context,
+              l10nByKey(l10n, state.message),
+              backgroundColor: AppColors.neonRedDark,
             );
           }
         },

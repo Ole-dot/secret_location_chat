@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/localization/l10n_error.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
+import 'package:secret_location_chat/core/widgets/chat_send_icon_button.dart';
 import 'package:secret_location_chat/data/chat/global_chat_repository.dart';
 import 'package:secret_location_chat/data/models/chat_message_model.dart';
 import 'package:secret_location_chat/features/chat/global_chat_launch_args.dart';
@@ -255,18 +256,9 @@ class _InputBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            IconButton(
+            ChatSendIconButton(
+              isLoading: isSending,
               onPressed: isSending ? null : onSend,
-              icon: isSending
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.neonRed,
-                      ),
-                    )
-                  : const Icon(Icons.send, color: AppColors.neonRed),
             ),
           ],
         ),

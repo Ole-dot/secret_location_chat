@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:secret_location_chat/core/audio/audio_service.dart';
 import 'package:secret_location_chat/core/localization/l10n_error.dart';
+import 'package:secret_location_chat/core/ui/cyber_snackbar.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/cyberpunk_button.dart';
 import 'package:secret_location_chat/data/models/gift_catalog_item.dart';
@@ -17,91 +19,91 @@ import 'package:secret_location_chat/l10n/app_localizations.dart';
 const _localGiftCatalog = <GiftCatalogItem>[
   GiftCatalogItem(
     giftId: 'glitch_dust',
-    name: 'GLITCH DUST',
+    name: 'Неон Фласк',
     stoneCost: 5,
     assetKey: 'assets/images/gifts/kolba.png',
     tier: 'common',
   ),
   GiftCatalogItem(
     giftId: 'stimpack',
-    name: 'STIMPACK',
+    name: 'Стимпэк',
     stoneCost: 10,
     assetKey: 'assets/images/gifts/shpriz.png',
     tier: 'common',
   ),
   GiftCatalogItem(
     giftId: 'data_drive',
-    name: 'DATA DRIVE',
+    name: 'Дата Драйв',
     stoneCost: 15,
     assetKey: 'assets/images/gifts/fleska.png',
     tier: 'common',
   ),
   GiftCatalogItem(
     giftId: 'neon_rose',
-    name: 'NEON ROSE',
+    name: 'Неон Роуз',
     stoneCost: 20,
     assetKey: 'assets/images/gifts/rosa.png',
     tier: 'common',
   ),
   GiftCatalogItem(
     giftId: 'cyber_cube',
-    name: 'CYBER CUBE',
+    name: 'Дата Кьюб',
     stoneCost: 30,
     assetKey: 'assets/images/gifts/kvadrat.png',
     tier: 'common',
   ),
   GiftCatalogItem(
     giftId: 'plasma_sphere',
-    name: 'PLASMA SPHERE',
+    name: 'Плазма Сфера',
     stoneCost: 40,
     assetKey: 'assets/images/gifts/shar.png',
     tier: 'rare',
   ),
   GiftCatalogItem(
     giftId: 'holo_dog',
-    name: 'HOLO DOG',
+    name: 'Холо Дог',
     stoneCost: 50,
     assetKey: 'assets/images/gifts/cobaka.png',
     tier: 'rare',
   ),
   GiftCatalogItem(
     giftId: 'cyber_cat',
-    name: 'CYBER CAT',
+    name: 'Сайбер Кэт',
     stoneCost: 60,
     assetKey: 'assets/images/gifts/kissa.png',
     tier: 'rare',
   ),
   GiftCatalogItem(
     giftId: 'power_glove',
-    name: 'POWER GLOVE',
+    name: 'Пауэр Глав',
     stoneCost: 80,
     assetKey: 'assets/images/gifts/perhatka.png',
     tier: 'rare',
   ),
   GiftCatalogItem(
     giftId: 'encrypted_scroll',
-    name: 'ENCRYPTED SCROLL',
+    name: 'Энкриптед Скролл',
     stoneCost: 100,
     assetKey: 'assets/images/gifts/svitok.png',
     tier: 'legendary',
   ),
   GiftCatalogItem(
     giftId: 'bionic_eye',
-    name: 'BIONIC EYE',
+    name: 'Бионик Ай',
     stoneCost: 250,
     assetKey: 'assets/images/gifts/glaz.png',
     tier: 'legendary',
   ),
   GiftCatalogItem(
     giftId: 'holo_knife',
-    name: 'HOLO KNIFE',
+    name: 'Холо Найф',
     stoneCost: 500,
     assetKey: 'assets/images/gifts/nozh.png',
     tier: 'legendary',
   ),
   GiftCatalogItem(
     giftId: 'black_ice_brain',
-    name: 'BLACK ICE BRAIN',
+    name: 'Блэк Айс Брэйн',
     stoneCost: 1000,
     assetKey: 'assets/images/gifts/mazg.png',
     tier: 'legendary',
@@ -122,7 +124,7 @@ class GiftStoreScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: AppColors.background,
           title: const Text(
-            'GIFT SHOWCASE',
+            'ГИФТ ВИТРИНА',
             style: TextStyle(
               fontFamily: 'monospace',
               letterSpacing: 3,
@@ -153,6 +155,7 @@ class GiftStoreScreen extends StatelessWidget {
                 border: Border.all(color: AppColors.borderRed),
               ),
               child: TabBar(
+                onTap: (_) => AudioService.instance.playClick(),
                 indicator: BoxDecoration(
                   color: AppColors.neonRed.withValues(alpha: 0.16),
                   border: const Border(
@@ -169,8 +172,8 @@ class GiftStoreScreen extends StatelessWidget {
                   fontSize: 11,
                 ),
                 tabs: const [
-                  Tab(text: 'STORE'),
-                  Tab(text: 'MY STASH'),
+                  Tab(text: 'Стор'),
+                  Tab(text: 'Май Стэш'),
                 ],
               ),
             ),
@@ -181,8 +184,10 @@ class GiftStoreScreen extends StatelessWidget {
               prev.successMessage != next.successMessage ||
               prev.error != next.error,
           listener: (context, state) {
+            final messenger = ScaffoldMessenger.of(context);
             if (state.successMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
+              AudioService.instance.playSuccess();
+              messenger.showSnackBar(
                 SnackBar(
                   backgroundColor: AppColors.surfaceCard,
                   content: Text(
@@ -193,6 +198,13 @@ class GiftStoreScreen extends StatelessWidget {
                     style: const TextStyle(fontFamily: 'monospace'),
                   ),
                 ),
+              );
+            }
+            if (state.error != null) {
+              CyberSnackBar.showError(
+                context,
+                state.error!,
+                duration: const Duration(seconds: 6),
               );
             }
           },
@@ -208,15 +220,18 @@ class GiftStoreScreen extends StatelessWidget {
               );
             }
 
-            return TabBarView(
-              children: [
-                _StoreTab(
-                  gifts: gifts,
-                  balance: balance,
-                  state: state,
-                ),
-                _StashTab(items: state.inventory),
-              ],
+            return SafeArea(
+              top: false,
+              child: TabBarView(
+                children: [
+                  _StoreTab(
+                    gifts: gifts,
+                    balance: balance,
+                    state: state,
+                  ),
+                  _StashTab(items: state.inventory),
+                ],
+              ),
             );
           },
         ),
@@ -249,7 +264,7 @@ class _StoreTab extends StatelessWidget {
             border: Border.all(color: AppColors.borderRed),
           ),
           child: const Text(
-            'TERMINAL:// SELECT GIFT · TAP BUY',
+            'ТЕРМИНАЛ:// ВЫБЕРИ ГИФТ · ЖМИ КУПИТЬ',
             style: TextStyle(
               color: AppColors.textSecondary,
               fontFamily: 'monospace',
@@ -286,10 +301,17 @@ class _StoreTab extends StatelessWidget {
                 gift: gift,
                 canAfford: balance >= gift.stoneCost,
                 isBuying: state.isBuying && state.buyingGiftId == gift.giftId,
-                onBuy: () => context.read<GiftStoreCubit>().buyGiftPreview(
-                      gift: gift,
-                      currentBalance: balance,
-                    ),
+                onBuy: () {
+                  debugPrint(
+                    '[GiftStoreScreen] Buy pressed '
+                    'giftId=${gift.giftId} stoneCost=${gift.stoneCost} '
+                    'balance=$balance',
+                  );
+                  context.read<GiftStoreCubit>().buyGiftPreview(
+                        gift: gift,
+                        currentBalance: balance,
+                      );
+                },
               );
             },
           ),
@@ -309,7 +331,7 @@ class _StashTab extends StatelessWidget {
     if (items.isEmpty) {
       return const Center(
         child: Text(
-          'NO ITEMS IN STASH. ACQUIRE ASSETS IN STORE.',
+          'НЕТ АЙТЕМОВ В МАЙ СТЭШ. ЗАБЕРИ АССЕТЫ В СТОР.',
           style: TextStyle(
             color: AppColors.textSecondary,
             fontFamily: 'monospace',
@@ -473,7 +495,7 @@ class _AnimatedGiftCardState extends State<_AnimatedGiftCard>
                           Icon(Icons.diamond, color: affordColor, size: 14),
                           const SizedBox(width: 4),
                           Text(
-                            '${widget.gift.stoneCost} STONES',
+                            '${widget.gift.stoneCost} СТОУНЫ',
                             style: TextStyle(
                               color: affordColor,
                               fontFamily: 'monospace',
@@ -486,11 +508,15 @@ class _AnimatedGiftCardState extends State<_AnimatedGiftCard>
                       ),
                       const SizedBox(height: 8),
                       CyberpunkButton(
-                        text: 'BUY',
+                        text: 'КУПИТЬ',
                         height: 34,
                         isLoading: widget.isBuying,
                         onPressed: widget.canAfford
                             ? () {
+                                debugPrint(
+                                  '[GiftStoreScreen] CyberpunkButton КУПИТЬ '
+                                  'giftId=${widget.gift.giftId}',
+                                );
                                 _triggerGlitch();
                                 widget.onBuy();
                               }
@@ -554,7 +580,7 @@ class _StashItemCardState extends State<_StashItemCard>
           side: const BorderSide(color: AppColors.borderRed),
         ),
         title: const Text(
-          'SELECT TARGET TO INITIATE TRANSFER PROTOCOL',
+          'ВЫБЕРИ ЦЕЛЬ · ПРОТОКОЛ ПЕРЕДАЧИ',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontFamily: 'monospace',
@@ -567,7 +593,7 @@ class _StashItemCardState extends State<_StashItemCard>
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text(
-              'SEND',
+              'ОТПРАВИТЬ',
               style: TextStyle(
                 color: AppColors.neonRed,
                 fontFamily: 'monospace',
@@ -633,7 +659,7 @@ class _StashItemCardState extends State<_StashItemCard>
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'TAP TO TRANSFER',
+                  'ЖМИ ДЛЯ ПЕРЕДАЧИ',
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontFamily: 'monospace',

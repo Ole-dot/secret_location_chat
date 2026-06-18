@@ -226,6 +226,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editIdentityNickHint => 'Acid Raccoon';
 
   @override
+  String get editIdentityRegisteredEmailLabel => 'REGISTERED EMAIL';
+
+  @override
   String get editIdentityAvatarLabel => 'AVATAR';
 
   @override
@@ -324,10 +327,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchEnterEmail => 'ENTER EMAIL';
 
   @override
+  String get searchEnterNickname => 'ENTER NICKNAME';
+
+  @override
+  String get searchEnterQuery => 'ENTER USERNAME OR EMAIL';
+
+  @override
+  String get searchNicknameLabel => 'NICKNAME';
+
+  @override
+  String get searchNicknameHint => 'Nickname (first letters)...';
+
+  @override
+  String get searchQueryLabel => 'USERNAME OR EMAIL';
+
+  @override
+  String get searchQueryHint => 'Search by username or email...';
+
+  @override
   String get searchTitle => 'FIND USER';
 
   @override
-  String get searchSubtitle => '// SEARCH BY EXACT EMAIL //';
+  String get searchSubtitle => '// SMART SEARCH · USERNAME OR EMAIL //';
 
   @override
   String get searchButton => 'Search';
@@ -340,6 +361,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchSendGift => 'SEND GIFT';
+
+  @override
+  String get searchAddFriend => 'ADD FRIEND';
+
+  @override
+  String get searchRequestSent => 'REQUEST SENT';
+
+  @override
+  String get searchAlreadyFriends => 'CONNECTED';
+
+  @override
+  String get searchIncomingRequest => 'INCOMING REQUEST';
 
   @override
   String get mapStyleDark => 'Dark';
@@ -557,4 +590,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String durationSeconds(int s) {
     return '${s}s';
   }
+
+  @override
+  String get eventsPullUp => 'PULL UP · EVENTS';
+
+  @override
+  String get eventsTerminalTitle => 'EVENTS TERMINAL';
+
+  @override
+  String get eventsTabGlobal => 'Global';
+
+  @override
+  String get eventsTabMyLogs => 'My Logs';
+
+  @override
+  String get eventsTabNetwork => 'NETWORK';
+
+  @override
+  String get eventsNetworkEmpty => 'NO ACTIVE INCOMING CONNECTIONS';
+
+  @override
+  String get eventsGlobalEmpty => 'NETWORK EMPTY';
+
+  @override
+  String get eventsMyLogsEmpty => 'NO DATA FOUND';
+
+  @override
+  String get eventsSignalLost => '// SIGNAL LOST //';
+
+  @override
+  String get eventsQueryOkZeroHits => '[ QUERY OK · ZERO HITS ]';
+
+  @override
+  String get eventsReplyPrefix => '[REPLY TO SYS.MSG] ';
+
+  @override
+  String get eventsTimestampUnavailable => '--:--';
+
+  @override
+  String get eventsNetworkTimeout =>
+      'Network error: [timeout] No response from Firestore';
+
+  @override
+  String eventsNetworkError(String code, String message) {
+    return 'Network error: [$code] $message';
+  }
+
+  @override
+  String get menuTerminalHack => 'TERMINAL HACK';
+
+  @override
+  String get menuStones => 'STONES';
+
+  @override
+  String get menuGiftStore => 'GIFT STORE';
+
+  @override
+  String get settingsClan => 'MY CLAN';
+
+  @override
+  String get settingsClanSubtitle => 'Manage your clan';
 }

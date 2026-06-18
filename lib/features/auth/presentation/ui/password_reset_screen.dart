@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:secret_location_chat/core/auth/firebase_auth_language.dart';
 import 'package:secret_location_chat/core/localization/l10n_error.dart';
+import 'package:secret_location_chat/core/ui/cyber_snackbar.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
@@ -52,14 +53,10 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               ),
             );
           } else if (state is PasswordResetErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: AppColors.neonRedDark,
-                content: Text(
-                  l10nByKey(AppLocalizations.of(context), state.message),
-                  style: const TextStyle(color: AppColors.white),
-                ),
-              ),
+            CyberSnackBar.showError(
+              context,
+              l10nByKey(AppLocalizations.of(context), state.message),
+              backgroundColor: AppColors.neonRedDark,
             );
           }
         },

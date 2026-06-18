@@ -32,7 +32,7 @@ class StonesBalanceChip extends StatelessWidget {
           const Icon(Icons.diamond_outlined, color: AppColors.neonRed, size: 16),
           const SizedBox(width: 6),
           Text(
-            '$balance STONES',
+            '$balance СТОУНЫ',
             style: const TextStyle(
               color: AppColors.textPrimary,
               fontSize: 11,

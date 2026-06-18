@@ -8,6 +8,9 @@ import 'package:secret_location_chat/l10n/app_localizations.dart';
 import 'package:secret_location_chat/core/router/router.dart';
 import 'package:secret_location_chat/core/theme/app_theme.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
+import 'package:secret_location_chat/data/clan/clan_repository.dart';
+import 'package:secret_location_chat/data/geo/geo_message_repository.dart';
+import 'package:secret_location_chat/data/friends/friends_repository.dart';
 import 'package:secret_location_chat/data/gifts/gift_repository.dart';
 import 'package:secret_location_chat/data/prefs/user_prefs_service.dart';
 import 'package:secret_location_chat/data/stones/stones_repository.dart';
@@ -28,6 +31,9 @@ class _SlcAppState extends State<SlcApp> {
   late final UserRepository _userRepo;
   late final StonesRepository _stonesRepo;
   late final GiftRepository _giftRepo;
+  late final ClanRepository _clanRepo;
+  late final GeoMessageRepository _geoMsgRepo;
+  late final FriendsRepository _friendsRepo;
   late final UserPrefsService _prefs;
   late final AppAuthBloc _authBloc;
   late final ThemeBloc _themeBloc;
@@ -44,6 +50,9 @@ class _SlcAppState extends State<SlcApp> {
     _userRepo = UserRepository();
     _stonesRepo = StonesRepository();
     _giftRepo = GiftRepository();
+    _clanRepo = ClanRepository();
+    _geoMsgRepo = GeoMessageRepository();
+    _friendsRepo = FriendsRepository();
     _prefs = UserPrefsService();
     _authBloc = AppAuthBloc(_authRepo)..add(AppAuthCheckEvent());
     _themeBloc = ThemeBloc(_prefs)..add(const ThemeLoadEvent());
@@ -88,6 +97,9 @@ class _SlcAppState extends State<SlcApp> {
         RepositoryProvider.value(value: _userRepo),
         RepositoryProvider.value(value: _stonesRepo),
         RepositoryProvider.value(value: _giftRepo),
+        RepositoryProvider.value(value: _clanRepo),
+        RepositoryProvider.value(value: _geoMsgRepo),
+        RepositoryProvider.value(value: _friendsRepo),
         RepositoryProvider.value(value: _prefs),
       ],
       child: MultiBlocProvider(
@@ -112,8 +124,20 @@ class _SlcAppState extends State<SlcApp> {
                   darkTheme: AppTheme.dark,
                   themeMode: themeMode,
                   locale: Locale(languageState.languageCode),
-                  localizationsDelegates: AppLocalizations.localizationsDelegates,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
                   supportedLocales: AppLocalizations.supportedLocales,
+                  localeResolutionCallback: (locale, supportedLocales) {
+                    if (locale == null) {
+                      return const Locale('en');
+                    }
+                    for (final supported in supportedLocales) {
+                      if (supported.languageCode == locale.languageCode) {
+                        return supported;
+                      }
+                    }
+                    return const Locale('en');
+                  },
                   routerConfig: _router,
                 );
               },

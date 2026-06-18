@@ -47,13 +47,12 @@ class LanguageCubit extends Cubit<LanguageState> {
     }
   }
 
-  Future<void> setLanguage(String languageCode) async {
-    final normalized = languageCode.toLowerCase();
-    if (!UserPrefsService.supportedLanguageCodes.contains(normalized)) return;
-
-    try {
-      await _prefs.setLanguageCode(normalized);
-      emit(LanguageLoadedState(normalized));
-    } catch (_) {}
+  Future<void> setLanguage(String code) async {
+    final normalized = code.toLowerCase();
+    if (!UserPrefsService.supportedLanguageCodes.contains(normalized)) {
+      return;
+    }
+    await _prefs.setLanguageCode(normalized);
+    emit(LanguageLoadedState(normalized));
   }
 }

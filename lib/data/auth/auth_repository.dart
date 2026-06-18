@@ -113,4 +113,72 @@ class AuthRepository {
     if (!doc.exists) return null;
     return UserModel.fromJson(doc.data()!);
   }
+
+  /// Permanently deletes the signed-in user's Firestore profile and Auth account.
+  ///
+  /// Order: best-effort subcollection wipe → `users/{uid}` document → Auth user.
+  /// Throws [FirebaseAuthException] with code `requires-recent-login` when the
+  /// session is too old for account deletion.
+  Future<void> deleteAccount(String uid) async {
+    final user = _auth.currentUser;
+    if (user == null || user.uid != uid) {
+      throw StateError('USER_NOT_AUTHENTICATED');
+    }
+
+    const subcollections = [
+      'inventory',
+      'received_gifts',
+      'sent_gifts',
+      'friends',
+      'clan_members',
+      'clan_invites',
+      'clan_chat',
+    ];
+
+    for (final name in subcollections) {
+      try {
+        await _deleteCollection(
+          _firestore.collection('users').doc(uid).collection(name),
+        );
+      } on FirebaseException {
+        // Continue — user doc + Auth deletion must still run.
+      }
+    }
+
+    try {
+      final chatsCol =
+          _firestore.collection('users').doc(uid).collection('chats');
+      final chatDocs = await chatsCol.get();
+      for (final chatDoc in chatDocs.docs) {
+        try {
+          await _deleteCollection(chatDoc.reference.collection('messages'));
+          await chatDoc.reference.delete();
+        } on FirebaseException {
+          // Continue with remaining chats / user doc.
+        }
+      }
+    } on FirebaseException {
+      // Continue — user doc + Auth deletion must still run.
+    }
+
+    // 1. Delete Firestore user profile document.
+    await _firestore.collection('users').doc(uid).delete();
+
+    // 2. Permanently remove Firebase Authentication account.
+    await user.delete();
+  }
+
+  Future<void> _deleteCollection(
+    CollectionReference<Map<String, dynamic>> collection,
+  ) async {
+    while (true) {
+      final snap = await collection.limit(100).get();
+      if (snap.docs.isEmpty) break;
+      final batch = _firestore.batch();
+      for (final doc in snap.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    }
+  }
 }

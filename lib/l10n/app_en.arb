@@ -87,6 +87,7 @@
   "editIdentityTitle": "CHANGE IDENTITY",
   "editIdentityNickLabel": "NICKNAME",
   "editIdentityNickHint": "Acid Raccoon",
+  "editIdentityRegisteredEmailLabel": "REGISTERED EMAIL",
   "editIdentityAvatarLabel": "AVATAR",
 
   "geolocationTitle": "GEOLOCATION",
@@ -130,12 +131,22 @@
   "menuLogout": "LOG OUT",
 
   "searchEnterEmail": "ENTER EMAIL",
+  "searchEnterNickname": "ENTER NICKNAME",
+  "searchEnterQuery": "ENTER USERNAME OR EMAIL",
+  "searchNicknameLabel": "NICKNAME",
+  "searchNicknameHint": "Nickname (first letters)...",
+  "searchQueryLabel": "USERNAME OR EMAIL",
+  "searchQueryHint": "Search by username or email...",
   "searchTitle": "FIND USER",
-  "searchSubtitle": "// SEARCH BY EXACT EMAIL //",
+  "searchSubtitle": "// SMART SEARCH · USERNAME OR EMAIL //",
   "searchButton": "Search",
   "searchNotFound": "USER NOT FOUND",
   "searchTapToSelect": "TAP TO SELECT",
   "searchSendGift": "SEND GIFT",
+  "searchAddFriend": "ADD FRIEND",
+  "searchRequestSent": "REQUEST SENT",
+  "searchAlreadyFriends": "CONNECTED",
+  "searchIncomingRequest": "INCOMING REQUEST",
 
   "mapStyleDark": "Dark",
   "mapStyleSatellite": "3D / Satellite",
@@ -235,5 +246,32 @@
   "durationSeconds": "{s}s",
   "@durationSeconds": {
     "placeholders": { "s": { "type": "int" } }
-  }
+  },
+
+  "eventsPullUp": "PULL UP · EVENTS",
+  "eventsTerminalTitle": "EVENTS TERMINAL",
+  "eventsTabGlobal": "Global",
+  "eventsTabMyLogs": "My Logs",
+  "eventsTabNetwork": "NETWORK",
+  "eventsNetworkEmpty": "NO ACTIVE INCOMING CONNECTIONS",
+  "eventsGlobalEmpty": "NETWORK EMPTY",
+  "eventsMyLogsEmpty": "NO DATA FOUND",
+  "eventsSignalLost": "// SIGNAL LOST //",
+  "eventsQueryOkZeroHits": "[ QUERY OK · ZERO HITS ]",
+  "eventsReplyPrefix": "[REPLY TO SYS.MSG] ",
+  "eventsTimestampUnavailable": "--:--",
+  "eventsNetworkTimeout": "Network error: [timeout] No response from Firestore",
+  "eventsNetworkError": "Network error: [{code}] {message}",
+  "@eventsNetworkError": {
+    "placeholders": {
+      "code": { "type": "String" },
+      "message": { "type": "String" }
+    }
+  },
+
+  "menuTerminalHack": "TERMINAL HACK",
+  "menuStones": "STONES",
+  "menuGiftStore": "GIFT STORE",
+  "settingsClan": "MY CLAN",
+  "settingsClanSubtitle": "Manage your clan"
 }

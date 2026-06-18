@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:secret_location_chat/core/auth/firebase_error_messages.dart';
 import 'package:secret_location_chat/data/gifts/gift_repository.dart';
@@ -87,7 +88,11 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
         if (isClosed) return;
         emit(state.copyWith(inventory: items));
       },
-      onError: (_) {},
+      onError: (err, stackTrace) {
+        logPurchaseError('GiftStoreCubit.watchInventory', err, stackTrace);
+        if (isClosed) return;
+        emit(state.copyWith(error: formatErrorForDisplay(err)));
+      },
     );
   }
 
@@ -116,7 +121,7 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
   }) async {
     if (state.isSending) return;
     if (currentBalance < gift.stoneCost) {
-      emit(state.copyWith(error: 'giftInsufficientStones'));
+      emit(state.copyWith(error: 'НЕДОСТАТОЧНО СТОУНОВ'));
       return;
     }
 
@@ -155,9 +160,9 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
   String _mapGiftError(Object err) {
     if (err is StateError) {
       return switch (err.message) {
-        'INSUFFICIENT_STONES' => 'giftInsufficientStones',
-        'CANNOT_GIFT_SELF' => 'giftCannotSendSelf',
-        'USER_NOT_FOUND' => 'giftUserNotFound',
+        'INSUFFICIENT_STONES' => 'НЕДОСТАТОЧНО СТОУНОВ',
+        'CANNOT_GIFT_SELF' => 'НЕЛЬЗЯ ОТПРАВИТЬ СЕБЕ',
+        'USER_NOT_FOUND' => 'ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН',
         _ => mapFirebaseError(err),
       };
     }
@@ -168,33 +173,60 @@ class GiftStoreCubit extends Cubit<GiftStoreState> {
     required GiftCatalogItem gift,
     required int currentBalance,
   }) async {
-    if (state.isBuying || state.isSending) return;
-    if (currentBalance < gift.stoneCost) {
-      emit(state.copyWith(error: 'giftInsufficientStones'));
+    debugPrint(
+      '[GiftStoreCubit] buyGiftPreview triggered '
+      'giftId=${gift.giftId} stoneCost=${gift.stoneCost} '
+      'currentBalance=$currentBalance userId=$userId',
+    );
+
+    if (state.isBuying || state.isSending) {
+      debugPrint('[GiftStoreCubit] buyGiftPreview aborted: busy');
       return;
     }
+
+    final cost = gift.stoneCost;
+    if (cost <= 0) {
+      final message =
+          'Некорректная цена гифта (${gift.giftId}: stoneCost=$cost)';
+      debugPrint('[GiftStoreCubit] buyGiftPreview aborted: $message');
+      emit(state.copyWith(error: message));
+      return;
+    }
+
+    if (currentBalance < cost) {
+      debugPrint(
+        '[GiftStoreCubit] buyGiftPreview aborted: insufficient stones '
+        '(balance=$currentBalance, cost=$cost)',
+      );
+      emit(state.copyWith(error: 'НЕДОСТАТОЧНО СТОУНОВ'));
+      return;
+    }
+
     emit(state.copyWith(
       isBuying: true,
       buyingGiftId: gift.giftId,
       clearError: true,
       clearSuccess: true,
     ));
+
     try {
       await _giftRepository.buyToInventory(
         userId: userId,
         gift: gift,
       );
+      debugPrint('[GiftStoreCubit] buyGiftPreview success giftId=${gift.giftId}');
       emit(state.copyWith(
         isBuying: false,
         clearBuyingGiftId: true,
-        successMessage: 'ITEM SENT TO STASH',
+        successMessage: 'АЙТЕМ СЕНТ ТУ МАЙ СТЭШ',
         clearError: true,
       ));
-    } catch (err) {
+    } catch (err, stackTrace) {
+      logPurchaseError('GiftStoreCubit.buyGiftPreview', err, stackTrace);
       emit(state.copyWith(
         isBuying: false,
         clearBuyingGiftId: true,
-        error: _mapGiftError(err),
+        error: formatErrorForDisplay(err),
       ));
     }
   }

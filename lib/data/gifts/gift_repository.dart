@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:secret_location_chat/core/auth/firebase_error_messages.dart';
 import 'package:secret_location_chat/data/models/gift_catalog_item.dart';
 import 'package:secret_location_chat/data/models/inventory_item.dart';
 import 'package:uuid/uuid.dart';
@@ -61,63 +63,82 @@ class GiftRepository {
     required String userId,
     required GiftCatalogItem gift,
   }) async {
-    await _firestore.runTransaction((transaction) async {
-      final userRef = _firestore.collection('users').doc(userId);
-      final userSnap = await transaction.get(userRef);
-      if (!userSnap.exists) {
-        throw StateError('USER_NOT_FOUND');
-      }
-      final userData = userSnap.data()!;
-      final balanceBefore = (userData['stonesBalance'] as num?)?.toInt() ?? 0;
-      if (balanceBefore < gift.stoneCost) {
-        throw StateError('INSUFFICIENT_STONES');
-      }
+    final cost = gift.stoneCost;
+    if (cost <= 0) {
+      throw StateError('INVALID_GIFT_PRICE');
+    }
 
-      final lifetimeSpent =
-          (userData['stonesLifetimeSpent'] as num?)?.toInt() ?? 0;
-      final version = (userData['stonesVersion'] as num?)?.toInt() ?? 0;
-      final balanceAfter = balanceBefore - gift.stoneCost;
-      final nextVersion = version + 1;
-      final now = FieldValue.serverTimestamp();
+    debugPrint(
+      '[GiftRepository] buyToInventory start '
+      'userId=$userId giftId=${gift.giftId} stoneCost=$cost',
+    );
 
-      final txRef = _firestore.collection('transactions').doc();
-      final inventoryRef = _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('inventory')
-          .doc(_uuid.v4());
+    try {
+      await _firestore.runTransaction((transaction) async {
+        final userRef = _firestore.collection('users').doc(userId);
+        final userSnap = await transaction.get(userRef);
+        if (!userSnap.exists) {
+          throw StateError('USER_NOT_FOUND');
+        }
+        final userData = userSnap.data()!;
+        final balanceBefore = (userData['stonesBalance'] as num?)?.toInt() ?? 0;
+        debugPrint(
+          '[GiftRepository] balanceBefore=$balanceBefore required=$cost',
+        );
+        if (balanceBefore < cost) {
+          throw StateError('INSUFFICIENT_STONES');
+        }
 
-      transaction.update(userRef, {
-        'stonesBalance': balanceAfter,
-        'stonesLifetimeSpent': lifetimeSpent + gift.stoneCost,
-        'stonesVersion': nextVersion,
-        'stonesUpdatedAt': now,
+        final lifetimeSpent =
+            (userData['stonesLifetimeSpent'] as num?)?.toInt() ?? 0;
+        final version = (userData['stonesVersion'] as num?)?.toInt() ?? 0;
+        final balanceAfter = balanceBefore - cost;
+        final nextVersion = version + 1;
+        final now = FieldValue.serverTimestamp();
+
+        final txRef = _firestore.collection('transactions').doc();
+        final inventoryRef = _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('inventory')
+            .doc(_uuid.v4());
+
+        transaction.update(userRef, {
+          'stonesBalance': balanceAfter,
+          'stonesLifetimeSpent': lifetimeSpent + cost,
+          'stonesVersion': nextVersion,
+          'stonesUpdatedAt': now,
+        });
+
+        transaction.set(txRef, {
+          'transactionId': txRef.id,
+          'userId': userId,
+          'type': 'gift_inventory_purchase',
+          'status': 'completed',
+          'amount': -cost,
+          'balanceBefore': balanceBefore,
+          'balanceAfter': balanceAfter,
+          'stonesVersion': nextVersion,
+          'giftId': gift.giftId,
+          'idempotencyKey': 'stash_${userId}_${inventoryRef.id}',
+          'createdAt': now,
+          'completedAt': now,
+        });
+
+        transaction.set(inventoryRef, {
+          'giftId': gift.giftId,
+          'giftName': gift.name,
+          'assetPath': gift.assetKey,
+          'tier': gift.tier,
+          'stoneCost': cost,
+          'purchasedAt': now,
+        });
       });
-
-      transaction.set(txRef, {
-        'transactionId': txRef.id,
-        'userId': userId,
-        'type': 'gift_inventory_purchase',
-        'status': 'completed',
-        'amount': -gift.stoneCost,
-        'balanceBefore': balanceBefore,
-        'balanceAfter': balanceAfter,
-        'stonesVersion': nextVersion,
-        'giftId': gift.giftId,
-        'idempotencyKey': 'stash_${userId}_${inventoryRef.id}',
-        'createdAt': now,
-        'completedAt': now,
-      });
-
-      transaction.set(inventoryRef, {
-        'giftId': gift.giftId,
-        'giftName': gift.name,
-        'assetPath': gift.assetKey,
-        'tier': gift.tier,
-        'stoneCost': gift.stoneCost,
-        'purchasedAt': now,
-      });
-    });
+      debugPrint('[GiftRepository] buyToInventory success giftId=${gift.giftId}');
+    } catch (error, stackTrace) {
+      logPurchaseError('GiftRepository.buyToInventory', error, stackTrace);
+      rethrow;
+    }
   }
 
   Future<GiftSendResult> sendGift({

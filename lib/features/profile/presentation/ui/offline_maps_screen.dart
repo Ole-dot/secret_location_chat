@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:secret_location_chat/core/layout/view_insets.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/l10n/app_localizations.dart';
 
@@ -49,8 +50,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      body: ScreenScrollBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

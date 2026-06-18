@@ -58,6 +58,7 @@ class PlanScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
+        top: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

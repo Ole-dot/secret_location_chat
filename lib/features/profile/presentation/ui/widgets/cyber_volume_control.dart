@@ -175,7 +175,7 @@ class _CyberVolumeControlState extends State<CyberVolumeControl>
           ),
           const SizedBox(height: 14),
           Text(
-            'LVL ${(_volume * 100).round()}%',
+            'УР. ${(_volume * 100).round()}%',
             textAlign: TextAlign.right,
             style: const TextStyle(
               color: _neonBullet,

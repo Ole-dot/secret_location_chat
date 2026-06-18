@@ -84,6 +84,7 @@
   "editIdentityTitle": "СМЕНИТЬ ЛИЧНОСТЬ",
   "editIdentityNickLabel": "НИКНЕЙМ",
   "editIdentityNickHint": "Кислотный Енот",
+  "editIdentityRegisteredEmailLabel": "ТЕКУЩАЯ ПОЧТА",
   "editIdentityAvatarLabel": "АВАТАР",
 
   "geolocationTitle": "ГЕОЛОКАЦИЯ",
@@ -121,12 +122,22 @@
   "menuLogout": "ВЫХОД",
 
   "searchEnterEmail": "ВВЕДИТЕ EMAIL",
+  "searchEnterNickname": "ВВЕДИТЕ НИК",
+  "searchEnterQuery": "ВВЕДИТЕ НИК ИЛИ EMAIL",
+  "searchNicknameLabel": "НИКНЕЙМ",
+  "searchNicknameHint": "Никнейм (первые буквы)...",
+  "searchQueryLabel": "НИК ИЛИ EMAIL",
+  "searchQueryHint": "Поиск по нику или email...",
   "searchTitle": "НАЙТИ ПОЛЬЗОВАТЕЛЯ",
-  "searchSubtitle": "// ПОИСК ПО ТОЧНОМУ EMAIL //",
+  "searchSubtitle": "// УМНЫЙ ПОИСК · НИК ИЛИ EMAIL //",
   "searchButton": "Искать",
   "searchNotFound": "ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН",
   "searchTapToSelect": "НАЖМИТЕ, ЧТОБЫ ВЫБРАТЬ",
   "searchSendGift": "ОТПРАВИТЬ ПОДАРОК",
+  "searchAddFriend": "ДОБАВИТЬ В ДРУЗЬЯ",
+  "searchRequestSent": "ЗАПРОС ОТПРАВЛЕН",
+  "searchAlreadyFriends": "В СЕТИ",
+  "searchIncomingRequest": "ВХОДЯЩИЙ ЗАПРОС",
 
   "mapStyleDark": "Тёмная",
   "mapStyleSatellite": "3D / Спутник",
@@ -202,5 +213,32 @@
 
   "durationHoursMinutes": "{h}ч {m}мин",
   "durationMinutes": "{m}мин",
-  "durationSeconds": "{s}с"
+  "durationSeconds": "{s}с",
+
+  "eventsPullUp": "ПОТЯНИ · ИВЕНТЫ",
+  "eventsTerminalTitle": "ТЕРМИНАЛ ИВЕНТОВ",
+  "eventsTabGlobal": "Глобал",
+  "eventsTabMyLogs": "Май Логс",
+  "eventsTabNetwork": "СЕТЬ",
+  "eventsNetworkEmpty": "НЕТ АКТИВНЫХ ВХОДЯЩИХ СОЕДИНЕНИЙ",
+  "eventsGlobalEmpty": "СЕТЬ ПУСТА",
+  "eventsMyLogsEmpty": "ДАННЫЕ НЕ НАЙДЕНЫ",
+  "eventsSignalLost": "// СИГНАЛ ПОТЕРЯН //",
+  "eventsQueryOkZeroHits": "[ ЗАПРОС OK · НОЛЬ ПОПАДАНИЙ ]",
+  "eventsReplyPrefix": "[ОТВЕТ НА SYS.MSG] ",
+  "eventsTimestampUnavailable": "--:--",
+  "eventsNetworkTimeout": "Ошибка сети: [timeout] нет ответа от Firestore",
+  "eventsNetworkError": "Ошибка сети: [{code}] {message}",
+  "@eventsNetworkError": {
+    "placeholders": {
+      "code": { "type": "String" },
+      "message": { "type": "String" }
+    }
+  },
+
+  "menuTerminalHack": "ТЕРМИНАЛ ХАК",
+  "menuStones": "СТОУНЫ",
+  "menuGiftStore": "ГИФТ СТОР",
+  "settingsClan": "МОЙ КЛАН",
+  "settingsClanSubtitle": "Управление кланом"
 }

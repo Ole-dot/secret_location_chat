@@ -36,7 +36,39 @@ class MapProfileUpdatedEvent extends MapEvent {
   MapProfileUpdatedEvent(this.username);
 }
 
+class MapFlyToEvent extends MapEvent {
+  final double latitude;
+  final double longitude;
+  final double zoom;
+  final String? geoMessageId;
+
+  MapFlyToEvent({
+    required this.latitude,
+    required this.longitude,
+    this.zoom = 16.5,
+    this.geoMessageId,
+  });
+}
+
+class MapClearFlyTargetEvent extends MapEvent {}
+
 // ─── State ────────────────────────────────────────────────────────────────────
+
+class MapFlyTarget {
+  final double latitude;
+  final double longitude;
+  final double zoom;
+  final String? geoMessageId;
+  final int sequence;
+
+  const MapFlyTarget({
+    required this.latitude,
+    required this.longitude,
+    required this.zoom,
+    this.geoMessageId,
+    required this.sequence,
+  });
+}
 
 class MapState {
   final List<GeoMessage> messages;
@@ -47,6 +79,7 @@ class MapState {
   final MapStyle mapStyle;
   final bool isLoading;
   final String? error;
+  final MapFlyTarget? flyTarget;
 
   const MapState({
     this.messages = const [],
@@ -57,6 +90,7 @@ class MapState {
     this.mapStyle = MapStyle.dark,
     this.isLoading = false,
     this.error,
+    this.flyTarget,
   });
 
   bool get isPremium => plan != UserPlan.free;
@@ -72,6 +106,8 @@ class MapState {
     bool? isLoading,
     String? error,
     bool clearError = false,
+    MapFlyTarget? flyTarget,
+    bool clearFlyTarget = false,
   }) => MapState(
     messages: messages ?? this.messages,
     userPosition: userPosition ?? this.userPosition,
@@ -81,6 +117,7 @@ class MapState {
     mapStyle: mapStyle ?? this.mapStyle,
     isLoading: isLoading ?? this.isLoading,
     error: clearError ? null : (error ?? this.error),
+    flyTarget: clearFlyTarget ? null : (flyTarget ?? this.flyTarget),
   );
 }
 
@@ -92,6 +129,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final String _uid;
   String _username;
   StreamSubscription<List<GeoMessage>>? _msgSub;
+  int _flySequence = 0;
 
   MapBloc({
     required GeoMessageRepository msgRepo,
@@ -111,6 +149,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapCycleStyleEvent>(_onCycleStyle);
     on<MapPlanChangedEvent>(_onPlanChanged);
     on<MapProfileUpdatedEvent>(_onProfileUpdated);
+    on<MapFlyToEvent>(_onFlyTo);
+    on<MapClearFlyTargetEvent>(_onClearFlyTarget);
   }
 
   Future<void> _onInit(MapInitEvent e, Emitter<MapState> emit) async {
@@ -179,6 +219,25 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   void _onProfileUpdated(MapProfileUpdatedEvent e, Emitter<MapState> emit) {
     _username = e.username;
+  }
+
+  void _onFlyTo(MapFlyToEvent e, Emitter<MapState> emit) {
+    _flySequence += 1;
+    emit(
+      state.copyWith(
+        flyTarget: MapFlyTarget(
+          latitude: e.latitude,
+          longitude: e.longitude,
+          zoom: e.zoom,
+          geoMessageId: e.geoMessageId,
+          sequence: _flySequence,
+        ),
+      ),
+    );
+  }
+
+  void _onClearFlyTarget(MapClearFlyTargetEvent e, Emitter<MapState> emit) {
+    emit(state.copyWith(clearFlyTarget: true));
   }
 
   @override

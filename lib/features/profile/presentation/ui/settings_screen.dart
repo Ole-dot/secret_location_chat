@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:secret_location_chat/core/localization/language_cubit.dart';
+import 'package:secret_location_chat/core/layout/view_insets.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/l10n/app_localizations.dart';
 
@@ -24,8 +23,7 @@ class SettingsScreen extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      body: ScreenScrollBody(
         child: Column(
           children: [
             _SettingsTile(
@@ -40,29 +38,16 @@ class SettingsScreen extends StatelessWidget {
               subtitle: l10n.settingsConfigure,
               onTap: () => context.push('/security'),
             ),
-            BlocBuilder<LanguageCubit, LanguageState>(
-              builder: (context, languageState) {
-                return _SettingsTile(
-                  icon: Icons.language_outlined,
-                  title: l10n.settingsLanguage,
-                  subtitle: _languageLabel(languageState.languageCode),
-                  onTap: () => context.push('/language'),
-                );
-              },
+            _SettingsTile(
+              icon: Icons.groups_outlined,
+              title: l10n.settingsClan,
+              subtitle: l10n.settingsClanSubtitle,
+              onTap: () => context.push('/clan'),
             ),
           ],
         ),
       ),
     );
-  }
-
-  String _languageLabel(String code) {
-    return switch (code) {
-      'ru' => 'Русский',
-      'en' => 'English',
-      'kk' => 'Қазақша',
-      _ => code.toUpperCase(),
-    };
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:secret_location_chat/core/audio/audio_service.dart';
 import '../theme/app_colors.dart';
 
 /// Главная кнопка в стиле Cyberpunk/Y2K
@@ -19,7 +20,13 @@ class SlcButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isLoading ? null : onTap,
+      onTap: isLoading
+          ? null
+          : () {
+              if (onTap == null) return;
+              AudioService.instance.playClick();
+              onTap!();
+            },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         height: 52,

@@ -6,6 +6,19 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isClanMember(clanOwnerId) {
+      return isSignedIn() && (
+        request.auth.uid == clanOwnerId ||
+        exists(/databases/$(database)/documents/users/$(clanOwnerId)/clan_members/$(request.auth.uid))
+      );
+    }
+
+    function isAcceptedFriend(profileOwnerId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid)/friends/$(profileOwnerId))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)/friends/$(profileOwnerId)).data.status == 'accepted';
+    }
+
     function stonesFieldsChanged() {
       return request.resource.data.diff(resource.data).affectedKeys()
         .hasAny([
@@ -22,29 +35,289 @@ service cloud.firestore {
       let versionAfter = request.resource.data.stonesVersion;
       let balanceBefore = resource.data.get('stonesBalance', 0);
       let balanceAfter = request.resource.data.stonesBalance;
+      let earnedBefore = resource.data.get('stonesLifetimeEarned', 0);
+      let earnedAfter = request.resource.data.stonesLifetimeEarned;
+      let spentBefore = resource.data.get('stonesLifetimeSpent', 0);
+      let spentAfter = request.resource.data.stonesLifetimeSpent;
+      let delta = balanceAfter - balanceBefore;
+
       return versionAfter == versionBefore + 1
         && balanceAfter >= 0
-        && balanceAfter >= balanceBefore
-        && request.resource.data.stonesLifetimeEarned
-          >= resource.data.get('stonesLifetimeEarned', 0)
-        && request.resource.data.stonesLifetimeSpent
-          >= resource.data.get('stonesLifetimeSpent', 0);
+        && earnedAfter >= earnedBefore
+        && spentAfter >= spentBefore
+        && (
+          (delta > 0
+            && earnedAfter == earnedBefore + delta
+            && spentAfter == spentBefore)
+          || (delta < 0
+            && spentAfter == spentBefore + (-delta)
+            && earnedAfter == earnedBefore)
+          || (delta == 0
+            && earnedAfter == earnedBefore
+            && spentAfter == spentBefore)
+        );
+    }
+
+    function validGiftInventoryItemCreate() {
+      return request.resource.data.giftId is string
+        && request.resource.data.giftId.size() > 0
+        && request.resource.data.giftName is string
+        && request.resource.data.giftName.size() > 0
+        && request.resource.data.assetPath is string
+        && request.resource.data.assetPath.size() > 0
+        && request.resource.data.tier is string
+        && request.resource.data.stoneCost is int
+        && request.resource.data.stoneCost > 0;
+    }
+
+    function validGiftInventoryTransactionCreate(txnId) {
+      return request.resource.data.userId == request.auth.uid
+        && request.resource.data.transactionId == txnId
+        && request.resource.data.type == 'gift_inventory_purchase'
+        && request.resource.data.status == 'completed'
+        && request.resource.data.amount is int
+        && request.resource.data.amount < 0
+        && request.resource.data.balanceBefore is int
+        && request.resource.data.balanceAfter is int
+        && request.resource.data.balanceAfter
+          == request.resource.data.balanceBefore + request.resource.data.amount
+        && request.resource.data.giftId is string
+        && request.resource.data.giftId.size() > 0
+        && request.resource.data.idempotencyKey is string
+        && request.resource.data.idempotencyKey.matches('stash_' + request.auth.uid + '_.*');
+    }
+
+    function validTransactionCreate(txnId) {
+      return request.resource.data.userId == request.auth.uid
+        && request.resource.data.transactionId == txnId
+        && request.resource.data.status == 'completed'
+        && request.resource.data.amount is int
+        && request.resource.data.balanceBefore is int
+        && request.resource.data.balanceAfter is int
+        && request.resource.data.balanceAfter
+          == request.resource.data.balanceBefore + request.resource.data.amount;
+    }
+
+    function onlySharedTargetChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['sharedTarget']);
+    }
+
+    function onlyClanOwnerIdChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['clanOwnerId']);
+    }
+
+    function onlyClanBootstrapFieldsChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['clanOwnerId', 'clanChannelsInitialized', 'clanCreatedAt']);
+    }
+
+    function onlyMemberLocationChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['latitude', 'longitude', 'lastLocationAt']);
+    }
+
+    function isSelfClanMemberDoc(uid, memberId) {
+      return request.auth.uid == uid && request.auth.uid == memberId;
+    }
+
+    function validClanMemberCreate(memberId) {
+      return request.resource.data.userId == memberId
+        && request.resource.data.status in ['pending', 'active'];
+    }
+
+    function onlyMemberLocationFields() {
+      return request.resource.data.keys()
+        .hasOnly(['latitude', 'longitude', 'lastLocationAt']);
+    }
+
+    function validStonesOnCreate() {
+      return request.resource.data.get('stonesBalance', 0) == 0
+        && request.resource.data.get('stonesLifetimeEarned', 0) == 0
+        && request.resource.data.get('stonesLifetimeSpent', 0) == 0
+        && request.resource.data.get('stonesVersion', 0) == 0;
+    }
+
+    function clanOwnerAssigningMember(targetUid) {
+      return isSignedIn()
+        && request.auth.uid != targetUid
+        && request.resource.data.clanOwnerId == request.auth.uid
+        && onlyClanOwnerIdChanged();
+    }
+
+    function clanOwnerRemovingMember(targetUid) {
+      return isSignedIn()
+        && request.auth.uid != targetUid
+        && resource.data.get('clanOwnerId', '') == request.auth.uid
+        && onlyClanOwnerIdChanged()
+        && !('clanOwnerId' in request.resource.data);
+    }
+
+    function validFriendCreate(friendId) {
+      return request.resource.data.friendUserId == friendId
+        && request.resource.data.status in ['pending', 'accepted']
+        && request.resource.data.username is string
+        && request.resource.data.avatar is string;
     }
 
     match /users/{uid} {
+      // Profile lookup for search (email / username), gifts, clan invites, etc.
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && request.auth.uid == uid;
-      allow update: if isSignedIn()
+      allow create: if request.auth != null
         && request.auth.uid == uid
-        && (!stonesFieldsChanged() || validStonesUpdate());
-      allow delete: if false;
+        && validStonesOnCreate();
+      allow update: if request.auth != null && (
+        (request.auth.uid == uid
+          && (!stonesFieldsChanged() || validStonesUpdate())
+          && !onlySharedTargetChanged())
+        || (request.auth.uid == uid && onlySharedTargetChanged())
+        || (isClanMember(uid) && onlySharedTargetChanged())
+        || (request.auth.uid == uid && onlyClanOwnerIdChanged())
+        || (request.auth.uid == uid && onlyClanBootstrapFieldsChanged())
+        || clanOwnerAssigningMember(uid)
+        || clanOwnerRemovingMember(uid)
+      );
+      allow delete: if request.auth != null && request.auth.uid == uid;
+
+      match /inventory/{itemId} {
+        allow read: if isSignedIn() && request.auth.uid == uid;
+        allow create: if isSignedIn()
+          && request.auth.uid == uid
+          && validGiftInventoryItemCreate();
+        allow update, delete: if isSignedIn() && request.auth.uid == uid;
+      }
+
+      match /friends/{friendId} {
+        allow read: if isSignedIn()
+          && (request.auth.uid == uid || request.auth.uid == friendId);
+
+        allow create: if isSignedIn() && (
+          (request.auth.uid == uid && validFriendCreate(friendId))
+          || (request.auth.uid == friendId
+            && request.resource.data.friendUserId == friendId
+            && request.resource.data.status == 'pending'
+            && request.resource.data.username is string
+            && request.resource.data.avatar is string)
+        );
+
+        allow update: if isSignedIn() && (
+          request.auth.uid == uid
+          || (request.auth.uid == friendId
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'accepted'
+            && request.resource.data.friendUserId == friendId)
+        );
+
+        allow delete: if isSignedIn()
+          && (request.auth.uid == uid || request.auth.uid == friendId);
+      }
+
+      match /friend_requests/{requestId} {
+        // Incoming friend requests live on the recipient's profile.
+        allow create: if isSignedIn()
+          && request.auth.uid != uid
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.recipientId == uid
+          && request.resource.data.status == 'pending';
+        allow read: if isSignedIn() && request.auth.uid == uid;
+        allow update, delete: if isSignedIn() && request.auth.uid == uid;
+      }
+
+      match /clan_members/{memberId} {
+        allow read: if isSignedIn()
+          && (request.auth.uid == uid || request.auth.uid == memberId);
+
+        allow create: if isSignedIn()
+          && request.auth.uid == uid
+          && validClanMemberCreate(memberId);
+
+        allow create: if isSignedIn()
+          && isSelfClanMemberDoc(uid, memberId)
+          && (validClanMemberCreate(memberId) || onlyMemberLocationFields());
+
+        allow create: if isSignedIn()
+          && request.auth.uid == memberId
+          && isClanMember(uid)
+          && onlyMemberLocationFields();
+
+        allow update: if isSignedIn() && (
+          (request.auth.uid == uid
+            && request.resource.data.status in ['pending', 'active', 'rejected'])
+          || (request.auth.uid == memberId
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'active')
+          || (request.auth.uid == memberId
+            && isClanMember(uid)
+            && onlyMemberLocationChanged())
+          || (isSelfClanMemberDoc(uid, memberId)
+            && onlyMemberLocationChanged())
+        );
+        allow delete: if isSignedIn() && (
+          request.auth.uid == uid
+          || (request.auth.uid == memberId && resource.data.status == 'pending')
+        );
+      }
+
+      match /clan_invites/{inviteId} {
+        allow read: if isSignedIn()
+          && (request.auth.uid == uid
+              || resource.data.fromUserId == request.auth.uid);
+        allow create: if isSignedIn()
+          && request.auth.uid != uid
+          && request.resource.data.fromUserId == request.auth.uid
+          && request.resource.data.toUserId == uid
+          && request.resource.data.status == 'pending';
+        allow update: if isSignedIn()
+          && request.auth.uid == uid
+          && request.resource.data.status in ['pending', 'accepted', 'rejected'];
+        allow delete: if isSignedIn()
+          && (request.auth.uid == uid
+              || resource.data.fromUserId == request.auth.uid);
+      }
+
+      match /clan_chat/{messageId} {
+        allow read: if isClanMember(uid);
+        allow create: if isClanMember(uid)
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500
+          && request.resource.data.expiresAt > request.time;
+        allow delete: if isClanMember(uid);
+        allow update: if false;
+      }
+
+      match /chats/{chatId} {
+        allow read: if isClanMember(uid);
+        allow create: if isSignedIn()
+          && request.auth.uid == uid
+          && request.resource.data.id == chatId
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.order is int;
+        allow update, delete: if isSignedIn() && request.auth.uid == uid;
+
+        match /messages/{messageId} {
+          allow read: if isClanMember(uid);
+          allow create: if isClanMember(uid)
+            && request.resource.data.authorUid == request.auth.uid
+            && request.resource.data.text is string
+            && request.resource.data.text.size() > 0
+            && request.resource.data.text.size() <= 500
+            && request.resource.data.expiresAt > request.time;
+          allow delete: if isClanMember(uid);
+          allow update: if false;
+        }
+      }
 
       match /received_gifts/{giftEventId} {
         allow read: if isSignedIn() && request.auth.uid == uid;
         allow create: if isSignedIn()
           && request.resource.data.giftEventId == giftEventId
           && request.resource.data.senderUserId == request.auth.uid;
-        allow update, delete: if false;
+        allow update: if false;
+        allow delete: if isSignedIn() && request.auth.uid == uid;
       }
 
       match /sent_gifts/{giftEventId} {
@@ -52,7 +325,8 @@ service cloud.firestore {
         allow create: if isSignedIn()
           && request.auth.uid == uid
           && request.resource.data.giftEventId == giftEventId;
-        allow update, delete: if false;
+        allow update: if false;
+        allow delete: if isSignedIn() && request.auth.uid == uid;
       }
     }
 
@@ -75,21 +349,27 @@ service cloud.firestore {
       allow delete: if isSignedIn()
         && resource.data.authorUid == request.auth.uid;
 
-      match /replies/{replyId} {
+      match /chat_messages/{chatId} {
         allow read: if isSignedIn();
         allow create: if isSignedIn()
           && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.text is string
           && request.resource.data.text.size() > 0
-          && request.resource.data.text.size() <= 300;
-        allow delete: if isSignedIn()
-          && resource.data.authorUid == request.auth.uid;
+          && request.resource.data.text.size() <= 500
+          && request.resource.data.expiresAt
+            == get(/databases/$(database)/documents/geo_messages/$(msgId)).data.expiresAt
+          && get(/databases/$(database)/documents/geo_messages/$(msgId)).data.expiresAt
+            > request.time;
+        allow delete: if isSignedIn() && (
+          resource.data.authorUid == request.auth.uid
+          || get(/databases/$(database)/documents/geo_messages/$(msgId)).data.authorUid
+            == request.auth.uid
+        );
+        allow update: if false;
       }
     }
 
-    // Collection-group read for "MY LOGS" — replies authored by the user
-    // across all parent geo_messages. Required for collectionGroup('replies')
-    // queries (the nested rule above does NOT apply to collection-group reads).
-    match /{path=**}/replies/{replyId} {
+    match /{path=**}/chat_messages/{chatId} {
       allow read: if isSignedIn();
     }
 
@@ -99,20 +379,38 @@ service cloud.firestore {
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 500;
+        && request.resource.data.text.size() <= 500
+        && (
+          !('recipientId' in request.resource.data)
+          || (
+            request.resource.data.recipientId is string
+            && request.resource.data.recipientId.size() > 0
+            && request.resource.data.recipientId != request.auth.uid
+            && request.resource.data.get('senderId', request.auth.uid)
+              == request.auth.uid
+          )
+        );
       allow update, delete: if false;
+    }
+
+    match /friend_requests/{requestId} {
+      allow create: if isSignedIn()
+        && request.resource.data.senderId == request.auth.uid;
+      allow read: if isSignedIn()
+        && (request.auth.uid == resource.data.senderId
+            || request.auth.uid == resource.data.recipientId);
+      allow update, delete: if isSignedIn()
+        && (request.auth.uid == resource.data.senderId
+            || request.auth.uid == resource.data.recipientId);
     }
 
     match /transactions/{transactionId} {
       allow read: if isSignedIn()
         && resource.data.userId == request.auth.uid;
-      allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.transactionId == transactionId
-        && request.resource.data.status == 'completed'
-        && request.resource.data.amount is int
-        && request.resource.data.balanceAfter
-          == request.resource.data.balanceBefore + request.resource.data.amount;
+      allow create: if isSignedIn() && (
+        validGiftInventoryTransactionCreate(transactionId)
+        || validTransactionCreate(transactionId)
+      );
       allow update, delete: if false;
     }
 

@@ -184,7 +184,7 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
         backgroundColor: AppColors.surfaceCard,
         behavior: SnackBarBehavior.floating,
         content: const Text(
-          'SYSTEM BYPASSED: +10 STONES MINED',
+          'СИСТЕМА ВЗЛОМАНА: +10 СТОУНОВ ДОБЫТО',
           style: TextStyle(
             color: AppColors.neonRed,
             fontFamily: 'monospace',
@@ -205,7 +205,7 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
             side: const BorderSide(color: AppColors.neonRed),
           ),
           title: const Text(
-            'LEVEL CLEARED',
+            'УРОВЕНЬ ПРОЙДЕН',
             style: TextStyle(
               color: AppColors.neonRed,
               fontFamily: 'monospace',
@@ -213,7 +213,7 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
             ),
           ),
           content: Text(
-            'TERMINAL HACK $_level COMPLETE\n+10 STONES CREDITED',
+            'ТЕРМИНАЛ ХАК $_level ЗАВЕРШЁН\n+10 СТОУНОВ ЗАЧИСЛЕНО',
             style: const TextStyle(
               color: AppColors.textPrimary,
               fontFamily: 'monospace',
@@ -227,7 +227,7 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
                 _continueNextLevel();
               },
               child: const Text(
-                'NEXT LEVEL',
+                'СЛЕД. УРОВЕНЬ',
                 style: TextStyle(color: AppColors.neonRed),
               ),
             ),
@@ -277,7 +277,7 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: const Text(
-          'TERMINAL HACK',
+          'ТЕРМИНАЛ ХАК',
           style: TextStyle(
             fontFamily: 'monospace',
             letterSpacing: 3,
@@ -290,19 +290,20 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
         ),
       ),
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Row(
                 children: [
-                  _HudChip(label: 'SCORE', value: '$_score'),
+                  _HudChip(label: 'СЧЁТ', value: '$_score'),
                   const SizedBox(width: 8),
-                  _HudChip(label: 'LEVEL', value: '$_level'),
+                  _HudChip(label: 'УРОВЕНЬ', value: '$_level'),
                   const Spacer(),
                   BlocBuilder<StonesCubit, StonesState>(
                     builder: (context, state) {
-                      return _HudChip(label: 'STONES', value: '${state.balance}');
+                      return _HudChip(label: 'СТОУНЫ', value: '${state.balance}');
                     },
                   ),
                 ],
@@ -321,7 +322,7 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
                     child: _gameOver
                         ? const Center(
                             child: Text(
-                              'SYSTEM FAILURE',
+                              'СБОЙ СИСТЕМЫ',
                               style: TextStyle(
                                 color: AppColors.neonRed,
                                 fontFamily: 'monospace',
@@ -403,7 +404,7 @@ class _TetrisGameScreenState extends State<TetrisGameScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: CyberpunkButton(
-                  text: 'REBOOT',
+                  text: 'РЕБУТ',
                   onPressed: () {
                     _resetBoard();
                     _spawnPiece();

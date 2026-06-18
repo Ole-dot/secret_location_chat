@@ -1,7 +1,44 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 
 const _defaultMessage = 'errorGeneric';
+
+/// Human-readable error for SnackBars and debug output (not an l10n key).
+String formatErrorForDisplay(Object error) {
+  if (error is FirebaseAuthException) {
+    final message = error.message?.trim();
+    if (message != null && message.isNotEmpty) {
+      return '[firebase_auth/${error.code}] $message';
+    }
+    return '[firebase_auth/${error.code}]';
+  }
+  if (error is FirebaseException) {
+    final plugin = error.plugin.isNotEmpty ? error.plugin : 'firebase';
+    final message = error.message?.trim();
+    if (message != null && message.isNotEmpty) {
+      return '[$plugin/${error.code}] $message';
+    }
+    return '[$plugin/${error.code}]';
+  }
+  if (error is StateError) {
+    return switch (error.message) {
+      'INSUFFICIENT_STONES' => 'НЕДОСТАТОЧНО СТОУНОВ',
+      'CANNOT_GIFT_SELF' => 'НЕЛЬЗЯ ОТПРАВИТЬ СЕБЕ',
+      'USER_NOT_FOUND' => 'ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН',
+      'INVALID_STONES_AMOUNT' => 'Некорректная сумма стоунов',
+      'INVALID_GIFT_PRICE' => 'Некорректная цена гифта',
+      _ => error.message,
+    };
+  }
+  return error.toString();
+}
+
+void logPurchaseError(String scope, Object error, [StackTrace? stackTrace]) {
+  debugPrint('[$scope] ${formatErrorForDisplay(error)}');
+  if (stackTrace != null) {
+    debugPrint(stackTrace.toString());
+  }
+}
 const _noConnectionMessage = 'errorNoConnection';
 
 /// Единый маппер Firebase Auth / Firestore / сетевых ошибок.

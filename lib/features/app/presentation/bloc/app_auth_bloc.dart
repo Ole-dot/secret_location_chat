@@ -17,6 +17,9 @@ class AppAuthLoginEvent extends AppAuthEvent {
 
 class AppAuthLogoutEvent extends AppAuthEvent {}
 
+/// Auth user was deleted via self-destruct; session must be cleared locally.
+class AppAuthAccountDeletedEvent extends AppAuthEvent {}
+
 class AppAuthRefreshProfileEvent extends AppAuthEvent {}
 
 // ─── States ───────────────────────────────────────────────────────────────────
@@ -48,6 +51,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     on<AppAuthCheckEvent>(_onCheck);
     on<AppAuthLoginEvent>(_onLogin);
     on<AppAuthLogoutEvent>(_onLogout);
+    on<AppAuthAccountDeletedEvent>(_onAccountDeleted);
     on<AppAuthRefreshProfileEvent>(_onRefreshProfile);
   }
 
@@ -107,6 +111,18 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     Emitter<AppAuthState> emit,
   ) async {
     await _authRepository.signOut();
+    emit(AppAuthUnauthenticatedState());
+  }
+
+  Future<void> _onAccountDeleted(
+    AppAuthAccountDeletedEvent event,
+    Emitter<AppAuthState> emit,
+  ) async {
+    try {
+      await _authRepository.signOut();
+    } catch (_) {
+      // Auth user may already be deleted — still clear local session.
+    }
     emit(AppAuthUnauthenticatedState());
   }
 

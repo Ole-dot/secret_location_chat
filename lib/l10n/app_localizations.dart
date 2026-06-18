@@ -532,6 +532,12 @@ abstract class AppLocalizations {
   /// **'Acid Raccoon'**
   String get editIdentityNickHint;
 
+  /// No description provided for @editIdentityRegisteredEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'REGISTERED EMAIL'**
+  String get editIdentityRegisteredEmailLabel;
+
   /// No description provided for @editIdentityAvatarLabel.
   ///
   /// In en, this message translates to:
@@ -718,6 +724,42 @@ abstract class AppLocalizations {
   /// **'ENTER EMAIL'**
   String get searchEnterEmail;
 
+  /// No description provided for @searchEnterNickname.
+  ///
+  /// In en, this message translates to:
+  /// **'ENTER NICKNAME'**
+  String get searchEnterNickname;
+
+  /// No description provided for @searchEnterQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'ENTER USERNAME OR EMAIL'**
+  String get searchEnterQuery;
+
+  /// No description provided for @searchNicknameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NICKNAME'**
+  String get searchNicknameLabel;
+
+  /// No description provided for @searchNicknameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname (first letters)...'**
+  String get searchNicknameHint;
+
+  /// No description provided for @searchQueryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'USERNAME OR EMAIL'**
+  String get searchQueryLabel;
+
+  /// No description provided for @searchQueryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by username or email...'**
+  String get searchQueryHint;
+
   /// No description provided for @searchTitle.
   ///
   /// In en, this message translates to:
@@ -727,7 +769,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'// SEARCH BY EXACT EMAIL //'**
+  /// **'// SMART SEARCH · USERNAME OR EMAIL //'**
   String get searchSubtitle;
 
   /// No description provided for @searchButton.
@@ -753,6 +795,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SEND GIFT'**
   String get searchSendGift;
+
+  /// No description provided for @searchAddFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'ADD FRIEND'**
+  String get searchAddFriend;
+
+  /// No description provided for @searchRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'REQUEST SENT'**
+  String get searchRequestSent;
+
+  /// No description provided for @searchAlreadyFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTED'**
+  String get searchAlreadyFriends;
+
+  /// No description provided for @searchIncomingRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'INCOMING REQUEST'**
+  String get searchIncomingRequest;
 
   /// No description provided for @mapStyleDark.
   ///
@@ -1149,6 +1215,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{s}s'**
   String durationSeconds(int s);
+
+  /// No description provided for @eventsPullUp.
+  ///
+  /// In en, this message translates to:
+  /// **'PULL UP · EVENTS'**
+  String get eventsPullUp;
+
+  /// No description provided for @eventsTerminalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'EVENTS TERMINAL'**
+  String get eventsTerminalTitle;
+
+  /// No description provided for @eventsTabGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Global'**
+  String get eventsTabGlobal;
+
+  /// No description provided for @eventsTabMyLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'My Logs'**
+  String get eventsTabMyLogs;
+
+  /// No description provided for @eventsTabNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'NETWORK'**
+  String get eventsTabNetwork;
+
+  /// No description provided for @eventsNetworkEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'NO ACTIVE INCOMING CONNECTIONS'**
+  String get eventsNetworkEmpty;
+
+  /// No description provided for @eventsGlobalEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'NETWORK EMPTY'**
+  String get eventsGlobalEmpty;
+
+  /// No description provided for @eventsMyLogsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'NO DATA FOUND'**
+  String get eventsMyLogsEmpty;
+
+  /// No description provided for @eventsSignalLost.
+  ///
+  /// In en, this message translates to:
+  /// **'// SIGNAL LOST //'**
+  String get eventsSignalLost;
+
+  /// No description provided for @eventsQueryOkZeroHits.
+  ///
+  /// In en, this message translates to:
+  /// **'[ QUERY OK · ZERO HITS ]'**
+  String get eventsQueryOkZeroHits;
+
+  /// No description provided for @eventsReplyPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'[REPLY TO SYS.MSG] '**
+  String get eventsReplyPrefix;
+
+  /// No description provided for @eventsTimestampUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'--:--'**
+  String get eventsTimestampUnavailable;
+
+  /// No description provided for @eventsNetworkTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error: [timeout] No response from Firestore'**
+  String get eventsNetworkTimeout;
+
+  /// No description provided for @eventsNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error: [{code}] {message}'**
+  String eventsNetworkError(String code, String message);
+
+  /// No description provided for @menuTerminalHack.
+  ///
+  /// In en, this message translates to:
+  /// **'TERMINAL HACK'**
+  String get menuTerminalHack;
+
+  /// No description provided for @menuStones.
+  ///
+  /// In en, this message translates to:
+  /// **'STONES'**
+  String get menuStones;
+
+  /// No description provided for @menuGiftStore.
+  ///
+  /// In en, this message translates to:
+  /// **'GIFT STORE'**
+  String get menuGiftStore;
+
+  /// No description provided for @settingsClan.
+  ///
+  /// In en, this message translates to:
+  /// **'MY CLAN'**
+  String get settingsClan;
+
+  /// No description provided for @settingsClanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your clan'**
+  String get settingsClanSubtitle;
 }
 
 class _AppLocalizationsDelegate

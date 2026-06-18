@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:secret_location_chat/core/localization/l10n_error.dart';
+import 'package:secret_location_chat/core/ui/cyber_snackbar.dart';
 import 'package:secret_location_chat/core/map/map_tile_cache.dart';
 import 'package:secret_location_chat/l10n/app_localizations.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/theme_bloc.dart';
@@ -11,14 +12,17 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/data/auth/auth_repository.dart';
+import 'package:secret_location_chat/data/clan/clan_repository.dart';
 import 'package:secret_location_chat/data/events/events_repository.dart';
 import 'package:secret_location_chat/data/geo/geo_message_repository.dart';
 import 'package:secret_location_chat/data/models/geo_message_model.dart';
 import 'package:secret_location_chat/data/prefs/user_prefs_service.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/app_auth_bloc.dart';
-import 'package:secret_location_chat/features/chat/global_chat_launch_args.dart';
+import 'package:secret_location_chat/features/map/presentation/ui/map_message_chat_navigation.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/events_cubit.dart';
+import 'package:secret_location_chat/features/map/presentation/bloc/events_sheet_cubit.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/map_bloc.dart';
+import 'package:secret_location_chat/features/profile/presentation/bloc/clan_map_cubit.dart';
 import 'package:secret_location_chat/features/map/presentation/ui/message_card.dart';
 import 'package:secret_location_chat/features/map/presentation/ui/send_message_sheet.dart';
 import 'package:secret_location_chat/features/map/presentation/ui/widgets/events_bottom_sheet.dart';
@@ -86,16 +90,30 @@ class MapScreen extends StatelessWidget {
           return MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (_) => MapBloc(
-                  msgRepo: GeoMessageRepository(),
+                create: (ctx) => MapBloc(
+                  msgRepo: ctx.read<GeoMessageRepository>(),
                   prefs: UserPrefsService(),
                   uid: authState.user.uid,
                   username: authState.user.username,
                 )..add(MapInitEvent()),
               ),
               BlocProvider(
-                create: (_) => EventsCubit(
-                  repository: EventsRepository(),
+                create: (_) {
+                  debugPrint(
+                    '[MapScreen] creating EventsCubit uid=${authState.user.uid}',
+                  );
+                  return EventsCubit(
+                    repository: EventsRepository(),
+                    userId: authState.user.uid,
+                  );
+                },
+              ),
+              BlocProvider(
+                create: (_) => EventsSheetCubit(),
+              ),
+              BlocProvider(
+                create: (ctx) => ClanMapCubit(
+                  repository: ctx.read<ClanRepository>(),
                   userId: authState.user.uid,
                 ),
               ),
@@ -173,23 +191,13 @@ class _MapBodyState extends State<_MapBody> {
     );
   }
 
-  Future<void> _openGlobalChat(BuildContext context, GeoMessage message) async {
-    final auth = context.read<AppAuthBloc>().state;
-    if (auth is! AppAuthAuthenticatedState) return;
-
-    var avatar = auth.user.avatar;
-    final profile = await context.read<AuthRepository>().fetchUserProfile(auth.user.uid);
-    if (profile != null) avatar = profile.avatar;
-
-    if (!context.mounted) return;
-    context.push(
-      '/chat',
-      extra: GlobalChatLaunchArgs(
-        userId: auth.user.uid,
-        nickname: auth.user.username,
-        avatar: avatar,
-        previewText: message.text,
-      ),
+  Future<void> _openMapMessageChat(BuildContext context, GeoMessage message) {
+    final mapState = context.read<MapBloc>().state;
+    return openMapMessageChat(
+      context,
+      messageId: message.id,
+      cachedMessage: message,
+      isAnonymous: mapState.isAnonymous,
     );
   }
 
@@ -199,24 +207,89 @@ class _MapBodyState extends State<_MapBody> {
     super.dispose();
   }
 
+  Future<void> _animatedFlyTo(LatLng dest, double zoom) async {
+    final start = _mapController.camera.center;
+    final startZoom = _mapController.camera.zoom;
+    const steps = 24;
+    const total = Duration(milliseconds: 550);
+
+    for (var i = 1; i <= steps; i++) {
+      if (!mounted) return;
+      final t = Curves.easeInOutCubic.transform(i / steps);
+      final lat = start.latitude + (dest.latitude - start.latitude) * t;
+      final lng = start.longitude + (dest.longitude - start.longitude) * t;
+      final z = startZoom + (zoom - startZoom) * t;
+      _mapController.move(LatLng(lat, lng), z);
+      await Future<void>.delayed(total ~/ steps);
+    }
+  }
+
+  GeoMessage? _findGeoMessage(MapState state, String? geoMessageId) {
+    if (geoMessageId == null) return null;
+    for (final msg in state.messages) {
+      if (msg.id == geoMessageId) return msg;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MapBloc, MapState>(
-      listener: (context, state) {
-        if (state.userPosition != null && !state.isLoading) {
-          _mapController.move(
-            LatLng(state.userPosition!.latitude, state.userPosition!.longitude),
-            14,
-          );
-        }
-        if (state.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: AppColors.neonRedDark,
-            content: Text(l10nByKey(AppLocalizations.of(context), state.error!), style: const TextStyle(color: AppColors.white)),
-          ));
-        }
-      },
-      builder: (context, state) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<MapBloc, MapState>(
+          listenWhen: (prev, curr) =>
+              prev.flyTarget?.sequence != curr.flyTarget?.sequence &&
+              curr.flyTarget != null,
+          listener: (context, state) async {
+            final target = state.flyTarget;
+            if (target == null) return;
+
+            await _animatedFlyTo(
+              LatLng(target.latitude, target.longitude),
+              target.zoom,
+            );
+            if (!context.mounted) return;
+
+            final match = _findGeoMessage(state, target.geoMessageId);
+            if (match != null) {
+              context.read<MapBloc>().add(MapSelectMessageEvent(match));
+            }
+            context.read<MapBloc>().add(MapClearFlyTargetEvent());
+          },
+        ),
+        BlocListener<MapBloc, MapState>(
+          listenWhen: (prev, curr) =>
+              prev.isLoading && !curr.isLoading && curr.userPosition != null,
+          listener: (context, state) {
+            context.read<ClanMapCubit>().syncMemberLocation(
+                  state.userPosition!.latitude,
+                  state.userPosition!.longitude,
+                );
+            _mapController.move(
+              LatLng(
+                state.userPosition!.latitude,
+                state.userPosition!.longitude,
+              ),
+              14,
+            );
+          },
+        ),
+        BlocListener<MapBloc, MapState>(
+          listenWhen: (prev, curr) =>
+              prev.error != curr.error && curr.error != null,
+          listener: (context, state) {
+            final error = state.error;
+            if (error == null) return;
+            CyberSnackBar.showError(
+              context,
+              l10nByKey(AppLocalizations.of(context), error),
+              backgroundColor: AppColors.neonRedDark,
+            );
+          },
+        ),
+      ],
+      child: BlocBuilder<MapBloc, MapState>(
+        builder: (context, state) {
         final center = state.userPosition != null
             ? LatLng(state.userPosition!.latitude, state.userPosition!.longitude)
             : _defaultCenter;
@@ -264,25 +337,90 @@ class _MapBodyState extends State<_MapBody> {
                         child: SizedBox.expand(),
                       ),
 
-                    MarkerLayer(
-                      markers: [
-                        if (state.userPosition != null)
-                          Marker(
-                            point: LatLng(state.userPosition!.latitude, state.userPosition!.longitude),
-                            width: 22, height: 22,
-                            child: _UserMarker(),
-                          ),
-                        ...state.messages.map((msg) => Marker(
-                          point: LatLng(msg.latitude, msg.longitude),
-                          width: 40, height: 40,
-                          alignment: Alignment.bottomCenter,
-                          child: _MsgMarker(
-                            message: msg,
-                            isSelected: state.selectedMessage?.id == msg.id,
-                            onTap: () => context.read<MapBloc>().add(MapSelectMessageEvent(msg)),
-                          ),
-                        )),
-                      ],
+                    BlocBuilder<ClanMapCubit, ClanMapState>(
+                      builder: (context, clanState) {
+                        final target = clanState.sharedTarget;
+                        final targetPoint = target == null
+                            ? null
+                            : LatLng(target.latitude, target.longitude);
+                        final polylines = <Polyline>[];
+
+                        if (targetPoint != null) {
+                          if (state.userPosition != null) {
+                            polylines.add(
+                              Polyline(
+                                points: [
+                                  LatLng(
+                                    state.userPosition!.latitude,
+                                    state.userPosition!.longitude,
+                                  ),
+                                  targetPoint,
+                                ],
+                                color: const Color(0xFF39FF14),
+                                strokeWidth: 2.5,
+                              ),
+                            );
+                          }
+                          for (final member in clanState.members) {
+                            if (!member.hasLocation) continue;
+                            polylines.add(
+                              Polyline(
+                                points: [
+                                  LatLng(member.latitude!, member.longitude!),
+                                  targetPoint,
+                                ],
+                                color: AppColors.neonRed.withValues(alpha: 0.7),
+                                strokeWidth: 2,
+                                borderColor: const Color(0xFF39FF14),
+                                borderStrokeWidth: 0.5,
+                              ),
+                            );
+                          }
+                        }
+
+                        return Stack(
+                          children: [
+                            if (polylines.isNotEmpty)
+                              PolylineLayer(polylines: polylines),
+                            MarkerLayer(
+                              markers: [
+                                if (state.userPosition != null)
+                                  Marker(
+                                    point: LatLng(
+                                      state.userPosition!.latitude,
+                                      state.userPosition!.longitude,
+                                    ),
+                                    width: 22,
+                                    height: 22,
+                                    child: _UserMarker(),
+                                  ),
+                                if (targetPoint != null)
+                                  Marker(
+                                    point: targetPoint,
+                                    width: 40,
+                                    height: 40,
+                                    child: const _SharedTargetMarker(),
+                                  ),
+                                ...state.messages.map((msg) => Marker(
+                                      point: LatLng(msg.latitude, msg.longitude),
+                                      width: 40,
+                                      height: 40,
+                                      alignment: Alignment.bottomCenter,
+                                      child: _MsgMarker(
+                                        message: msg,
+                                        isSelected:
+                                            state.selectedMessage?.id == msg.id,
+                                        onTap: () => _openMapMessageChat(
+                                          context,
+                                          msg,
+                                        ),
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
                     ),
 
                     const RichAttributionWidget(
@@ -418,7 +556,7 @@ class _MapBodyState extends State<_MapBody> {
                         message: state.selectedMessage!,
                         onClose: () => context.read<MapBloc>().add(MapSelectMessageEvent(null)),
                         onReply: () {},
-                        onOpenChat: () => _openGlobalChat(
+                        onOpenChat: () => _openMapMessageChat(
                           context,
                           state.selectedMessage!,
                         ),
@@ -481,7 +619,8 @@ class _MapBodyState extends State<_MapBody> {
               ],
             ),
           );
-      },
+        },
+      ),
     );
   }
 
@@ -576,6 +715,29 @@ class _UserMarker extends StatelessWidget {
       boxShadow: [BoxShadow(color: AppColors.neonRedGlow, blurRadius: 10, spreadRadius: 2)],
     ),
   );
+}
+
+class _SharedTargetMarker extends StatelessWidget {
+  const _SharedTargetMarker();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFF39FF14).withValues(alpha: 0.25),
+        border: Border.all(color: const Color(0xFF39FF14), width: 2),
+        boxShadow: const [
+          BoxShadow(color: Color(0x8039FF14), blurRadius: 14, spreadRadius: 2),
+        ],
+      ),
+      child: const Icon(
+        Icons.radar,
+        color: Color(0xFF39FF14),
+        size: 22,
+      ),
+    );
+  }
 }
 
 class _MsgMarker extends StatelessWidget {

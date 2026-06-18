@@ -226,6 +226,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get editIdentityNickHint => 'Кислотный Енот';
 
   @override
+  String get editIdentityRegisteredEmailLabel => 'ТЕКУЩАЯ ПОЧТА';
+
+  @override
   String get editIdentityAvatarLabel => 'АВАТАР';
 
   @override
@@ -324,10 +327,28 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchEnterEmail => 'ВВЕДИТЕ EMAIL';
 
   @override
+  String get searchEnterNickname => 'ВВЕДИТЕ НИК';
+
+  @override
+  String get searchEnterQuery => 'ВВЕДИТЕ НИК ИЛИ EMAIL';
+
+  @override
+  String get searchNicknameLabel => 'НИКНЕЙМ';
+
+  @override
+  String get searchNicknameHint => 'Никнейм (первые буквы)...';
+
+  @override
+  String get searchQueryLabel => 'НИК ИЛИ EMAIL';
+
+  @override
+  String get searchQueryHint => 'Поиск по нику или email...';
+
+  @override
   String get searchTitle => 'НАЙТИ ПОЛЬЗОВАТЕЛЯ';
 
   @override
-  String get searchSubtitle => '// ПОИСК ПО ТОЧНОМУ EMAIL //';
+  String get searchSubtitle => '// УМНЫЙ ПОИСК · НИК ИЛИ EMAIL //';
 
   @override
   String get searchButton => 'Искать';
@@ -340,6 +361,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get searchSendGift => 'ОТПРАВИТЬ ПОДАРОК';
+
+  @override
+  String get searchAddFriend => 'ДОБАВИТЬ В ДРУЗЬЯ';
+
+  @override
+  String get searchRequestSent => 'ЗАПРОС ОТПРАВЛЕН';
+
+  @override
+  String get searchAlreadyFriends => 'В СЕТИ';
+
+  @override
+  String get searchIncomingRequest => 'ВХОДЯЩИЙ ЗАПРОС';
 
   @override
   String get mapStyleDark => 'Тёмная';
@@ -557,4 +590,64 @@ class AppLocalizationsRu extends AppLocalizations {
   String durationSeconds(int s) {
     return '$sс';
   }
+
+  @override
+  String get eventsPullUp => 'ПОТЯНИ · ИВЕНТЫ';
+
+  @override
+  String get eventsTerminalTitle => 'ТЕРМИНАЛ ИВЕНТОВ';
+
+  @override
+  String get eventsTabGlobal => 'Глобал';
+
+  @override
+  String get eventsTabMyLogs => 'Май Логс';
+
+  @override
+  String get eventsTabNetwork => 'СЕТЬ';
+
+  @override
+  String get eventsNetworkEmpty => 'НЕТ АКТИВНЫХ ВХОДЯЩИХ СОЕДИНЕНИЙ';
+
+  @override
+  String get eventsGlobalEmpty => 'СЕТЬ ПУСТА';
+
+  @override
+  String get eventsMyLogsEmpty => 'ДАННЫЕ НЕ НАЙДЕНЫ';
+
+  @override
+  String get eventsSignalLost => '// СИГНАЛ ПОТЕРЯН //';
+
+  @override
+  String get eventsQueryOkZeroHits => '[ ЗАПРОС OK · НОЛЬ ПОПАДАНИЙ ]';
+
+  @override
+  String get eventsReplyPrefix => '[ОТВЕТ НА SYS.MSG] ';
+
+  @override
+  String get eventsTimestampUnavailable => '--:--';
+
+  @override
+  String get eventsNetworkTimeout =>
+      'Ошибка сети: [timeout] нет ответа от Firestore';
+
+  @override
+  String eventsNetworkError(String code, String message) {
+    return 'Ошибка сети: [$code] $message';
+  }
+
+  @override
+  String get menuTerminalHack => 'ТЕРМИНАЛ ХАК';
+
+  @override
+  String get menuStones => 'СТОУНЫ';
+
+  @override
+  String get menuGiftStore => 'ГИФТ СТОР';
+
+  @override
+  String get settingsClan => 'МОЙ КЛАН';
+
+  @override
+  String get settingsClanSubtitle => 'Управление кланом';
 }

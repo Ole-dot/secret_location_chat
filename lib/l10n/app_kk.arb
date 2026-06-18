@@ -84,6 +84,7 @@
   "editIdentityTitle": "ТҰЛҒАНЫ ӨЗГЕРТУ",
   "editIdentityNickLabel": "НИКНЕЙМ",
   "editIdentityNickHint": "Қышқыл Енот",
+  "editIdentityRegisteredEmailLabel": "ТІРКЕЛГЕН EMAIL",
   "editIdentityAvatarLabel": "АВАТАР",
 
   "geolocationTitle": "ГЕОЛОКАЦИЯ",
@@ -121,12 +122,22 @@
   "menuLogout": "ШЫҒУ",
 
   "searchEnterEmail": "EMAIL ЕНГІЗІҢІЗ",
+  "searchEnterNickname": "НИК ЕНГІЗІҢІЗ",
+  "searchEnterQuery": "НИК НЕМЕСЕ EMAIL ЕНГІЗІҢІЗ",
+  "searchNicknameLabel": "НИКНЕЙМ",
+  "searchNicknameHint": "Никнейм (алғашқы әріптер)...",
+  "searchQueryLabel": "НИК НЕМЕСЕ EMAIL",
+  "searchQueryHint": "Ник немесе email бойынша іздеу...",
   "searchTitle": "ПАЙДАЛАНУШЫ ТАБУ",
-  "searchSubtitle": "// НАҚТЫ EMAIL БОЙЫНША ІЗДЕУ //",
+  "searchSubtitle": "// АҚЫЛДЫ ІЗДЕУ · НИК НЕМЕСЕ EMAIL //",
   "searchButton": "Іздеу",
   "searchNotFound": "ПАЙДАЛАНУШЫ ТАБЫЛМАДЫ",
   "searchTapToSelect": "ТАҢДАУ ҮШІН БАСЫҢЫЗ",
   "searchSendGift": "СЫЙЛЫҚ ЖІБЕРУ",
+  "searchAddFriend": "ДОС БОЛУ",
+  "searchRequestSent": "СҰРАУ ЖІБЕРІЛДІ",
+  "searchAlreadyFriends": "ҚОСЫЛДЫ",
+  "searchIncomingRequest": "КІРІС СҰРАУ",
 
   "mapStyleDark": "Қараңғы",
   "mapStyleSatellite": "3D / Спутник",
@@ -202,5 +213,32 @@
 
   "durationHoursMinutes": "{h}сағ {m}мин",
   "durationMinutes": "{m}мин",
-  "durationSeconds": "{s}с"
+  "durationSeconds": "{s}с",
+
+  "eventsPullUp": "ТАРТЫП · ОҚИҒАЛАР",
+  "eventsTerminalTitle": "ОҚИҒАЛАР ТЕРМИНАЛЫ",
+  "eventsTabGlobal": "Глобал",
+  "eventsTabMyLogs": "Менің логтар",
+  "eventsTabNetwork": "ЖЕЛІ",
+  "eventsNetworkEmpty": "БЕЛСЕНДІ КІРІС БАЙЛАНЫСТАР ЖОҚ",
+  "eventsGlobalEmpty": "ЖЕЛІ БОС",
+  "eventsMyLogsEmpty": "ДЕРЕКТЕР ТАБЫЛМАДЫ",
+  "eventsSignalLost": "// СИГНАЛ ЖОҒАЛДЫ //",
+  "eventsQueryOkZeroHits": "[ СҰРАУ OK · НӨЛ НӘТИЖЕ ]",
+  "eventsReplyPrefix": "[SYS.MSG ЖАУАБЫ] ",
+  "eventsTimestampUnavailable": "--:--",
+  "eventsNetworkTimeout": "Желі қатесі: [timeout] Firestore жауап бермеді",
+  "eventsNetworkError": "Желі қатесі: [{code}] {message}",
+  "@eventsNetworkError": {
+    "placeholders": {
+      "code": { "type": "String" },
+      "message": { "type": "String" }
+    }
+  },
+
+  "menuTerminalHack": "ТЕРМИНАЛ ХАК",
+  "menuStones": "STONES",
+  "menuGiftStore": "GIFT STORE",
+  "settingsClan": "МЕНІҢ КЛАН",
+  "settingsClanSubtitle": "Кланды басқару"
 }

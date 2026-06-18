@@ -1,13 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:secret_location_chat/core/audio/audio_service.dart';
 import 'package:secret_location_chat/core/firebase/firestore_setup.dart';
+import 'package:secret_location_chat/core/localization/timeago_config.dart';
 import 'package:secret_location_chat/core/map/map_tile_cache.dart';
 import 'package:secret_location_chat/features/app/presentation/ui/app.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initTimeagoLocales();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -24,6 +27,7 @@ void main() async {
   ]);
 
   await MapTileCache.initialize();
+  await AudioService.instance.init();
 
   // Wrap in try-catch so we see the real error if Firebase fails
   try {

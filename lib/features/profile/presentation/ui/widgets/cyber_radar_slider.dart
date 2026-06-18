@@ -8,12 +8,11 @@ class _RadarBlip {
   final double angle;
   final double distance;
 
-  double glow;
+  double glow = 0.0;
 
   _RadarBlip({
     required this.angle,
     required this.distance,
-    this.glow = 0,
   });
 }
 
@@ -124,7 +123,7 @@ class _CyberRadarSliderState extends State<CyberRadarSlider>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'RADAR RANGE: ${_radius.round()} KM',
+            'РАДАР ДАЛЬНОСТЬ: ${_radius.round()} КМ',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: _matrixGreen,
@@ -168,7 +167,7 @@ class _CyberRadarSliderState extends State<CyberRadarSlider>
           ),
           const SizedBox(height: 8),
           Text(
-            'CONTACTS: ${visible.length}',
+            'КОНТАКТЫ: ${visible.length}',
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.textSecondary,
@@ -199,7 +198,7 @@ class _CyberRadarSliderState extends State<CyberRadarSlider>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                '1 KM',
+                '1 КМ',
                 style: TextStyle(
                   color: AppColors.textDisabled,
                   fontFamily: 'monospace',
@@ -207,7 +206,7 @@ class _CyberRadarSliderState extends State<CyberRadarSlider>
                 ),
               ),
               Text(
-                '50 KM',
+                '50 КМ',
                 style: TextStyle(
                   color: AppColors.textDisabled,
                   fontFamily: 'monospace',

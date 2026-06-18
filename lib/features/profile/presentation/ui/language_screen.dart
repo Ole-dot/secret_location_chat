@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:secret_location_chat/core/layout/view_insets.dart';
 import 'package:secret_location_chat/core/localization/language_cubit.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 import 'package:secret_location_chat/l10n/app_localizations.dart';
@@ -29,11 +30,13 @@ class LanguageScreen extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: BlocBuilder<LanguageCubit, LanguageState>(
-        builder: (context, state) {
-          return ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
+      body: SafeArea(
+        top: false,
+        child: BlocBuilder<LanguageCubit, LanguageState>(
+          builder: (context, state) {
+            return ListView(
+              padding: kScreenContentPadding,
+              children: [
               const Text(
                 '// SELECT INTERFACE LANGUAGE //',
                 style: TextStyle(
@@ -52,9 +55,10 @@ class LanguageScreen extends StatelessWidget {
                       context.read<LanguageCubit>().setLanguage(option.code),
                 ),
               ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

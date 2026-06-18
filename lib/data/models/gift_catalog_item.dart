@@ -27,7 +27,9 @@ class GiftCatalogItem {
         giftId: id,
         name: data['name'] as String? ?? id.toUpperCase(),
         description: data['description'] as String? ?? '',
-        stoneCost: (data['stoneCost'] as num?)?.toInt() ?? 0,
+        stoneCost: (data['stoneCost'] as num?)?.toInt() ??
+            (data['price'] as num?)?.toInt() ??
+            0,
         assetKey: data['assetKey'] as String? ?? 'gift_default',
         tier: data['tier'] as String? ?? 'common',
         isActive: data['isActive'] as bool? ?? true,

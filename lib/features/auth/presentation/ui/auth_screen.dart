@@ -6,6 +6,7 @@ import 'package:secret_location_chat/core/widgets/slc_button.dart';
 import 'package:secret_location_chat/features/app/presentation/bloc/app_auth_bloc.dart';
 import 'package:secret_location_chat/features/auth/presentation/bloc/auth_form_bloc.dart';
 import 'package:secret_location_chat/core/localization/l10n_error.dart';
+import 'package:secret_location_chat/core/ui/cyber_snackbar.dart';
 import 'package:secret_location_chat/l10n/app_localizations.dart';
 
 /// Экран входа — тёмные силуэты, красные акценты
@@ -44,14 +45,10 @@ class _AuthScreenState extends State<AuthScreen> {
           if (state is AppAuthAuthenticatedState) {
             context.go('/map');
           } else if (state is AppAuthErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: AppColors.neonRedDark,
-                content: Text(
-                  l10nByKey(l10n, state.message),
-                  style: const TextStyle(color: AppColors.white),
-                ),
-              ),
+            CyberSnackBar.showError(
+              context,
+              l10nByKey(l10n, state.message),
+              backgroundColor: AppColors.neonRedDark,
             );
           }
         },

@@ -229,6 +229,9 @@ class AppLocalizationsKk extends AppLocalizations {
   String get editIdentityNickHint => 'Қышқыл Енот';
 
   @override
+  String get editIdentityRegisteredEmailLabel => 'ТІРКЕЛГЕН EMAIL';
+
+  @override
   String get editIdentityAvatarLabel => 'АВАТАР';
 
   @override
@@ -327,10 +330,28 @@ class AppLocalizationsKk extends AppLocalizations {
   String get searchEnterEmail => 'EMAIL ЕНГІЗІҢІЗ';
 
   @override
+  String get searchEnterNickname => 'НИК ЕНГІЗІҢІЗ';
+
+  @override
+  String get searchEnterQuery => 'НИК НЕМЕСЕ EMAIL ЕНГІЗІҢІЗ';
+
+  @override
+  String get searchNicknameLabel => 'НИКНЕЙМ';
+
+  @override
+  String get searchNicknameHint => 'Никнейм (алғашқы әріптер)...';
+
+  @override
+  String get searchQueryLabel => 'НИК НЕМЕСЕ EMAIL';
+
+  @override
+  String get searchQueryHint => 'Ник немесе email бойынша іздеу...';
+
+  @override
   String get searchTitle => 'ПАЙДАЛАНУШЫ ТАБУ';
 
   @override
-  String get searchSubtitle => '// НАҚТЫ EMAIL БОЙЫНША ІЗДЕУ //';
+  String get searchSubtitle => '// АҚЫЛДЫ ІЗДЕУ · НИК НЕМЕСЕ EMAIL //';
 
   @override
   String get searchButton => 'Іздеу';
@@ -343,6 +364,18 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get searchSendGift => 'СЫЙЛЫҚ ЖІБЕРУ';
+
+  @override
+  String get searchAddFriend => 'ДОС БОЛУ';
+
+  @override
+  String get searchRequestSent => 'СҰРАУ ЖІБЕРІЛДІ';
+
+  @override
+  String get searchAlreadyFriends => 'ҚОСЫЛДЫ';
+
+  @override
+  String get searchIncomingRequest => 'КІРІС СҰРАУ';
 
   @override
   String get mapStyleDark => 'Қараңғы';
@@ -560,4 +593,64 @@ class AppLocalizationsKk extends AppLocalizations {
   String durationSeconds(int s) {
     return '$sс';
   }
+
+  @override
+  String get eventsPullUp => 'ТАРТЫП · ОҚИҒАЛАР';
+
+  @override
+  String get eventsTerminalTitle => 'ОҚИҒАЛАР ТЕРМИНАЛЫ';
+
+  @override
+  String get eventsTabGlobal => 'Глобал';
+
+  @override
+  String get eventsTabMyLogs => 'Менің логтар';
+
+  @override
+  String get eventsTabNetwork => 'ЖЕЛІ';
+
+  @override
+  String get eventsNetworkEmpty => 'БЕЛСЕНДІ КІРІС БАЙЛАНЫСТАР ЖОҚ';
+
+  @override
+  String get eventsGlobalEmpty => 'ЖЕЛІ БОС';
+
+  @override
+  String get eventsMyLogsEmpty => 'ДЕРЕКТЕР ТАБЫЛМАДЫ';
+
+  @override
+  String get eventsSignalLost => '// СИГНАЛ ЖОҒАЛДЫ //';
+
+  @override
+  String get eventsQueryOkZeroHits => '[ СҰРАУ OK · НӨЛ НӘТИЖЕ ]';
+
+  @override
+  String get eventsReplyPrefix => '[SYS.MSG ЖАУАБЫ] ';
+
+  @override
+  String get eventsTimestampUnavailable => '--:--';
+
+  @override
+  String get eventsNetworkTimeout =>
+      'Желі қатесі: [timeout] Firestore жауап бермеді';
+
+  @override
+  String eventsNetworkError(String code, String message) {
+    return 'Желі қатесі: [$code] $message';
+  }
+
+  @override
+  String get menuTerminalHack => 'ТЕРМИНАЛ ХАК';
+
+  @override
+  String get menuStones => 'STONES';
+
+  @override
+  String get menuGiftStore => 'GIFT STORE';
+
+  @override
+  String get settingsClan => 'МЕНІҢ КЛАН';
+
+  @override
+  String get settingsClanSubtitle => 'Кланды басқару';
 }

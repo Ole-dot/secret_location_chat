@@ -32,7 +32,7 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: const Text(
-          'STONES',
+          'СТОУНЫ',
           style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900),
         ),
         leading: IconButton(
@@ -43,6 +43,7 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
       body: BlocBuilder<StonesCubit, StonesState>(
         builder: (context, state) {
           return SafeArea(
+            top: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -62,12 +63,57 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        l10n.stonesDescription,
-                        style: const TextStyle(
+                      const Text(
+                        'Пополните баланс Стоунов для отправки подарков в чате.',
+                        style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
                           height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceCard,
+                          border: Border.all(color: AppColors.neonRed, width: 1.5),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: AppColors.neonRedGlow,
+                              blurRadius: 16,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Row(
+                              children: [
+                                Icon(
+                                  Icons.terminal,
+                                  color: AppColors.neonRed,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'TERMINAL:// SIDE QUEST',
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontFamily: 'monospace',
+                                    fontSize: 10,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            CyberpunkButton(
+                              text: 'Заработать деньги',
+                              height: 48,
+                              onPressed: () => context.push('/minigame'),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -114,7 +160,7 @@ class _StonesStoreScreenState extends State<StonesStoreScreen> {
                 ),
                 if (!state.storeAvailable && !state.isLoading)
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                     child: CyberpunkButton(
                       text: l10n.stonesRefreshStore,
                       isOutlined: true,
@@ -174,7 +220,7 @@ class _StonesProductTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$amount STONES',
+                  '$amount СТОУНЫ',
                   style: const TextStyle(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:secret_location_chat/core/audio/audio_service.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
 
 class CyberpunkButton extends StatefulWidget {
@@ -74,6 +75,7 @@ class _CyberpunkButtonState extends State<CyberpunkButton>
 
   Future<void> _handleTap() async {
     if (widget.isLoading || widget.onPressed == null) return;
+    AudioService.instance.playClick();
     _glitchController.forward(from: 0);
     widget.onPressed!();
   }

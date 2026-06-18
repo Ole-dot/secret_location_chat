@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:secret_location_chat/core/layout/view_insets.dart';
 import 'package:secret_location_chat/core/theme/app_colors.dart';
-import 'package:secret_location_chat/core/widgets/slc_button.dart';
+import 'package:secret_location_chat/core/widgets/chat_send_icon_button.dart';
 import 'package:secret_location_chat/features/map/presentation/bloc/map_bloc.dart';
 import 'package:secret_location_chat/l10n/app_localizations.dart';
 
@@ -39,19 +40,21 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
     final l10n = AppLocalizations.of(context);
     final isPremium = context.read<MapBloc>().state.isPremium;
 
-    return Container(
-      padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        border: Border(top: BorderSide(color: AppColors.borderRed, width: 1)),
-      ),
-      child: Column(
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(
+          24,
+          24,
+          24,
+          sheetBottomPadding(context),
+        ),
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          border: Border(top: BorderSide(color: AppColors.borderRed, width: 1)),
+        ),
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,20 +131,33 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
 
           const SizedBox(height: 16),
 
-          // Текстовое поле
-          TextField(
-            controller: _ctrl,
-            style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
-            maxLines: 3,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: l10n.sendMessageHint,
-              hintStyle: const TextStyle(color: AppColors.textDisabled),
-              border: const OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.border),
-                borderRadius: BorderRadius.all(Radius.circular(4)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _ctrl,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 15,
+                  ),
+                  maxLines: 3,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: l10n.sendMessageHint,
+                    hintStyle: const TextStyle(color: AppColors.textDisabled),
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.border),
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                    ),
+                  ),
+                  onSubmitted: (_) => _submitMessage(context),
+                ),
               ),
-            ),
+              ChatSendIconButton(
+                onPressed: () => _submitMessage(context),
+              ),
+            ],
           ),
 
           const SizedBox(height: 16),
@@ -192,26 +208,33 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
             }),
           ),
 
-          const SizedBox(height: 20),
-
-          SlcButton(
-            text: _isAnon ? l10n.sendAnonymously : l10n.commonSend,
-            onTap: () {
-              final text = _ctrl.text.trim();
-              if (text.isEmpty) return;
-              context.read<MapBloc>().add(
-                MapSendMessageEvent(
-                  text: text,
-                  isAnonymous: _isAnon,
-                  ttl: Duration(minutes: _ttlMinutes),
-                ),
-              );
-              Navigator.pop(context);
-            },
-          ),
+          const SizedBox(height: 8),
+          if (_isAnon)
+            Text(
+              l10n.sendAnonymously,
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 10,
+                letterSpacing: 1,
+              ),
+            ),
         ],
       ),
+      ),
     );
+  }
+
+  void _submitMessage(BuildContext context) {
+    final text = _ctrl.text.trim();
+    if (text.isEmpty) return;
+    context.read<MapBloc>().add(
+      MapSendMessageEvent(
+        text: text,
+        isAnonymous: _isAnon,
+        ttl: Duration(minutes: _ttlMinutes),
+      ),
+    );
+    Navigator.pop(context);
   }
 
   void _showPremiumHint(BuildContext context) {
